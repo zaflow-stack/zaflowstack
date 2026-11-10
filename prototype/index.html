@@ -1,0 +1,395 @@
+<title>See It Before You Send It</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: prototype phone centred, with a demo-control rail beside it on desktop. Light/dark tokens; mock brand, not an official one. */
+:root{
+  --bg:#EEF1EE; --surface:#FFFFFF; --ink:#13201B; --muted:#5B6B64; --line:#DDE4DF;
+  --accent:#0E6B4D; --accent-ink:#FFFFFF; --accent-soft:#E2F1EA;
+  --warn:#9A5200; --warn-soft:#FFF1DC; --bad:#B3261E;
+  --phone:#FFFFFF; --dark-card:#14211C; --dark-card-ink:#FFFFFF;
+  --font-text:'Inter',system-ui,sans-serif; --font-num:'Space Grotesk','Inter',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1210; --surface:#16201C; --ink:#EAF2EE; --muted:#93A59C; --line:#27352F;
+  --accent:#3FBF93; --accent-ink:#06150F; --accent-soft:#17302A;
+  --warn:#F0A94A; --warn-soft:#33250F; --bad:#FF8A80;
+  --phone:#111A16; --dark-card:#1E2F28; --dark-card-ink:#FFFFFF; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1210; --surface:#16201C; --ink:#EAF2EE; --muted:#93A59C; --line:#27352F;
+  --accent:#3FBF93; --accent-ink:#06150F; --accent-soft:#17302A;
+  --warn:#F0A94A; --warn-soft:#33250F; --bad:#FF8A80;
+  --phone:#111A16; --dark-card:#1E2F28; --dark-card-ink:#FFFFFF; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-text);font-size:15px;line-height:1.45;
+  padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:20px 32px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+
+.stage{max-width:960px;margin:0 auto;display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:32px;align-items:start;justify-content:center}
+.rail{display:flex;flex-direction:column;gap:20px;min-width:0}
+.rail h1{font-family:var(--font-num);font-size:26px;line-height:1.15;margin:0;text-wrap:balance}
+.rail p{margin:0;color:var(--muted)}
+.tag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.steps button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:500}
+.steps button[aria-current="page"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.panel .row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:transparent;border-radius:8px;padding:8px 12px;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.script{border-left:3px solid var(--accent);padding-left:12px;color:var(--ink)}
+.script small{display:block;color:var(--muted);margin-top:4px}
+.q{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+.q b{color:var(--ink);font-weight:600}
+
+/* phone */
+.phone{width:100%;max-width:390px;min-height:760px;background:var(--phone);border:1px solid var(--line);border-radius:32px;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 12px 40px rgba(10,30,20,.12)}
+.mock{font-size:11px;text-align:center;background:var(--accent-soft);color:var(--accent);padding:6px;font-weight:600;letter-spacing:.04em}
+.screen{flex:1;display:flex;flex-direction:column;padding:20px 20px 0;gap:16px;min-height:0}
+.screen[hidden]{display:none}
+.topbar{display:flex;align-items:center;gap:10px}
+.back{border:0;background:var(--accent-soft);color:var(--accent);width:36px;height:36px;border-radius:50%;font-size:18px}
+.topbar h2{margin:0;font-size:17px;font-family:var(--font-num)}
+.lbl{font-size:12px;color:var(--muted);font-weight:500}
+.field{border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;align-items:baseline;gap:8px;background:var(--surface)}
+.field:focus-within{border-color:var(--accent)}
+.field span{color:var(--muted);font-weight:600}
+.field input{border:0;outline:0;background:transparent;color:var(--ink);font-family:var(--font-num);font-size:22px;font-weight:600;width:100%;min-width:0}
+.hero{background:var(--dark-card);color:var(--dark-card-ink);border-radius:18px;padding:18px}
+.hero .lbl{color:#B9CDC4}
+.hero .big{font-family:var(--font-num);font-size:44px;font-weight:700;line-height:1.05;margin-top:4px;word-break:break-word}
+.hero .big small{font-size:20px;font-weight:600;margin-right:6px;color:#9FE3C6}
+.hero .sub{margin-top:6px;color:#B9CDC4;font-size:13px}
+.list{display:flex;flex-direction:column}
+.list .r{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.list .r:last-child{border-bottom:0}
+.list .r span:first-child{color:var(--muted)}
+.list .r b{font-weight:600;text-align:right}
+.list .r.total b{font-size:17px}
+.expiry{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.expiry.low .dot{background:var(--warn)}
+.expiry.low{color:var(--warn)}
+.cta{margin-top:auto;position:sticky;bottom:0;background:var(--phone);padding:12px 0 20px;display:flex;flex-direction:column;gap:8px}
+.btn{border:0;border-radius:14px;padding:15px 18px;font-weight:600;font-size:16px;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.warn{background:var(--warn);color:var(--phone)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.fine{font-size:12px;color:var(--muted);text-align:center}
+.who{display:flex;gap:12px;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:14px}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;flex:none}
+.who b{display:block}
+.who small{color:var(--muted)}
+.alert{background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:12px 14px;font-size:13px;display:flex;flex-direction:column;gap:8px}
+.alert b{font-size:14px}
+.alert .cmp{display:flex;gap:8px;align-items:baseline;color:var(--ink)}
+.alert s{color:var(--muted)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)}
+.check input{margin-top:2px;width:18px;height:18px;accent-color:var(--accent)}
+
+/* tracker */
+.status-head{display:flex;flex-direction:column;gap:6px}
+.pill{align-self:flex-start;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600;background:var(--accent-soft);color:var(--accent)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.status-head h3{margin:0;font-family:var(--font-num);font-size:24px;line-height:1.15;text-wrap:balance}
+.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tl li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;padding-bottom:18px;position:relative}
+.tl li::before{content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--line)}
+.tl li:last-child::before{display:none}
+.tl li.done::before{background:var(--accent)}
+.node{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;background:var(--phone)}
+.done .node{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.now .node{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.late .node{border-color:var(--warn);box-shadow:0 0 0 4px var(--warn-soft)}
+.tl b{display:block;font-weight:600}
+.tl small{color:var(--muted)}
+.tl li.future b{color:var(--muted);font-weight:500}
+.src{display:inline-block;margin-top:2px;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.ref{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px dashed var(--line);border-radius:12px;padding:10px 14px;font-size:13px}
+.ref code{font-family:var(--font-num);font-weight:600;font-size:14px}
+.linkbtn{border:0;background:transparent;color:var(--accent);font-weight:600;padding:4px}
+
+.sheet{position:absolute;inset:0;background:rgba(10,20,15,.55);display:flex;align-items:flex-end;z-index:5}
+.sheet[hidden]{display:none}
+.sheet>div{background:var(--phone);width:100%;border-radius:24px 24px 0 0;padding:20px;display:flex;flex-direction:column;gap:12px}
+.sheet h4{margin:0;font-family:var(--font-num);font-size:18px}
+.opt{border:1.5px solid var(--line);background:transparent;border-radius:12px;padding:12px 14px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.opt small{color:var(--muted)}
+.toast{position:absolute;left:20px;right:20px;bottom:90px;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-size:13px;z-index:6}
+.toast[hidden]{display:none}
+
+@media (max-width:860px){
+  .stage{grid-template-columns:minmax(0,1fr)}
+  .phone{margin-inline:auto}
+}
+@media (prefers-reduced-motion:no-preference){.screen{animation:in .2s ease-out}@keyframes in{from{opacity:.4;transform:translateY(6px)}}}
+</style>
+
+<div class="stage">
+  <main class="phone" id="phone" aria-label="Prototype phone screen">
+    <div class="mock">MOCK DATA · CLASS PROTOTYPE · NO REAL MONEY</div>
+
+    <!-- 1 PREVIEW -->
+    <section class="screen" id="s-preview">
+      <div class="topbar"><h2>Send money abroad</h2></div>
+      <div>
+        <label class="lbl" for="amt">You send</label>
+        <div class="field"><span>AED</span><input id="amt" inputmode="decimal" value="1000" autocomplete="off"></div>
+        <div class="lbl" style="margin-top:6px">To India · bank account · INR</div>
+      </div>
+      <div class="hero" aria-live="polite">
+        <div class="lbl">Your family receives</div>
+        <div class="big"><small>INR</small><span id="p-recv">23,840</span></div>
+        <div class="sub" id="p-arrive">Usually arrives in 5 to 30 minutes</div>
+      </div>
+      <div class="list">
+        <div class="r total"><span>You pay in total</span><b class="num" id="p-total">AED 1,008.00</b></div>
+        <div class="r"><span>Transfer fee</span><b class="num" id="p-fee">AED 8.00</b></div>
+        <div class="r"><span>Exchange rate</span><b class="num" id="p-rate">1 AED = 23.84 INR</b></div>
+        <div class="r"><span>Estimated arrival</span><b id="p-eta">Today, 14:20 to 14:50</b></div>
+      </div>
+      <div class="expiry" id="p-exp"><i class="dot"></i><span>Quote locked for <b class="num" id="p-clock">2:00</b></span></div>
+      <div class="cta">
+        <button class="btn" id="to-review">Continue with this quote</button>
+        <div class="fine">No account needed to see a quote. You sign in to send.</div>
+      </div>
+    </section>
+
+    <!-- 2 REVIEW -->
+    <section class="screen" id="s-review" hidden>
+      <div class="topbar"><button class="back" id="back-preview" aria-label="Back to quote">‹</button><h2>Review and send</h2></div>
+      <div class="alert" id="r-alert" hidden>
+        <b>The rate changed. Please review the new amount.</b>
+        <div class="cmp"><s class="num" id="r-old">INR 23,840</s> <span>→</span> <b class="num" style="color:var(--ink)" id="r-new">INR 23,790</b></div>
+        <span>Your quote expired, so we fetched a fresh one. Nothing was charged.</span>
+      </div>
+      <div class="who">
+        <div class="avatar">RK</div>
+        <div><b>Ramesh Kumar</b><small>Bank of Baroda · account •••• 4821 · IFSC BARB0••••12</small></div>
+      </div>
+      <div class="hero">
+        <div class="lbl">Ramesh receives</div>
+        <div class="big"><small>INR</small><span id="r-recv">23,840</span></div>
+        <div class="sub" id="r-eta">Estimated arrival today, 14:20 to 14:50</div>
+      </div>
+      <div class="list">
+        <div class="r"><span>Leaves your account</span><b class="num" id="r-total">AED 1,008.00</b></div>
+        <div class="r"><span>Transfer amount</span><b class="num" id="r-amt">AED 1,000.00</b></div>
+        <div class="r"><span>Fee</span><b class="num" id="r-fee">AED 8.00</b></div>
+        <div class="r"><span>Rate</span><b class="num" id="r-rate">1 AED = 23.84 INR</b></div>
+      </div>
+      <div class="expiry" id="r-exp"><i class="dot"></i><span>Quote valid for <b class="num" id="r-clock">2:00</b></span></div>
+      <label class="check"><input type="checkbox" id="conf"> <span>These details match what Ramesh gave me.</span></label>
+      <div class="cta">
+        <button class="btn" id="send" disabled>Send AED 1,000</button>
+        <div class="fine">You will be charged AED 1,008.00 once. A duplicate tap is ignored.</div>
+      </div>
+    </section>
+
+    <!-- 3 TRACK -->
+    <section class="screen" id="s-track" hidden>
+      <div class="topbar"><h2>Transfer to Ramesh</h2></div>
+      <div class="status-head">
+        <span class="pill" id="t-pill">On track</span>
+        <h3 id="t-title">Your money is being processed</h3>
+        <div class="lbl" id="t-sub">Next update expected by 14:30</div>
+      </div>
+      <div class="alert" id="t-alert" hidden>
+        <b>This is taking longer than quoted.</b>
+        <span>Last confirmed: sent to Ramesh's bank at 14:12. The partner bank has not confirmed payout yet. Your money is not lost and you were not charged twice. We check again at 16:00 and will message you.</span>
+      </div>
+      <ol class="tl" id="t-tl"></ol>
+      <div class="ref"><span>Reference <code id="ref">CP-7K2M-4491</code></span><button class="linkbtn" id="copy-ref">Copy</button></div>
+      <div class="cta">
+        <button class="btn" id="share">Share receipt with family</button>
+        <button class="btn ghost" id="help">Get help with this transfer</button>
+      </div>
+    </section>
+
+    <div class="sheet" id="sheet" hidden>
+      <div role="dialog" aria-label="Get help">
+        <h4>Get help with this transfer</h4>
+        <div class="ref"><span>We attach reference <code id="ref2">CP-7K2M-4491</code></span></div>
+        <button class="opt" data-h="chat"><b>Chat with support</b><small>Average reply in 3 min. Amount, rate and status already shared.</small></button>
+        <button class="opt" data-h="trace"><b>Ask for a payout trace</b><small>We contact the partner bank. Update within 4 hours.</small></button>
+        <button class="btn ghost" id="close-sheet">Close</button>
+      </div>
+    </div>
+    <div class="toast" id="toast" hidden></div>
+  </main>
+
+  <aside class="rail">
+    <div>
+      <div class="tag">Case 1 · The first transfer feels risky</div>
+      <h1>See it before you send it</h1>
+    </div>
+    <p class="script">“Before I send, show me what my family gets. After I send, show me where the money is and who can help if it’s late.”</p>
+    <nav class="steps" aria-label="Screens">
+      <button data-go="preview">1 Preview</button>
+      <button data-go="review">2 Review and send</button>
+      <button data-go="track">3 Track</button>
+    </nav>
+    <div class="panel">
+      <div class="tag">Demo controls</div>
+      <div class="row">
+        <button class="chip" id="expire">Expire the quote now</button>
+        <button class="chip" id="reset">Reset prototype</button>
+      </div>
+      <div class="tag" style="margin-top:6px">Transfer status (screen 3)</div>
+      <div class="row" id="state-chips">
+        <button class="chip" data-st="processing" aria-pressed="true">Processing</button>
+        <button class="chip" data-st="sent" aria-pressed="false">Sent to bank</button>
+        <button class="chip" data-st="delayed" aria-pressed="false">Delayed</button>
+        <button class="chip" data-st="delivered" aria-pressed="false">Delivered</button>
+      </div>
+      <p class="fine" style="text-align:left">“Delivered” only shows when the payout partner confirms receipt. Until then the screen shows the last confirmed step.</p>
+    </div>
+    <div class="panel">
+      <div class="tag">Test script (5 min)</div>
+      <div class="q">
+        <span><b>Say:</b> “You’re sending money home for a bill due tomorrow. Show me how much leaves your account, how much your family gets, and what you’d do if it’s late.”</span>
+        <span><b>Count unaided:</b> total debit · recipient amount · arrival window · last confirmed step · next step if late.</span>
+        <span><b>Ask:</b> which detail would still make you go back to your cash agent?</span>
+        <span><b>Pass:</b> 4 of 5 complete both tasks without help.</span>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+(function(){
+  var RATES=[23.84,23.79], FEE=8, QUOTE_SECS=120;
+  var S={amount:1000,ver:0,expiresAt:0,status:'processing',expired:false,oldRecv:0};
+  var $=function(i){return document.getElementById(i)};
+  var fmt=function(n,d){return n.toLocaleString('en-US',{minimumFractionDigits:d||0,maximumFractionDigits:d||0})};
+  var screens=['preview','review','track'];
+
+  function fee(a){return a>2000?15:FEE}
+  function recv(){return Math.round(S.amount*RATES[S.ver])}
+  function parse(){var v=parseFloat(($('amt').value||'').replace(/,/g,''));return isFinite(v)&&v>0?Math.min(v,50000):0}
+  function lockQuote(){S.expiresAt=Date.now()+QUOTE_SECS*1000;S.expired=false}
+  function eta(){return S.ver?'Today, 14:25 to 14:55':'Today, 14:20 to 14:50'}
+
+  function renderQuote(){
+    var a=S.amount, f=fee(a), r=recv(), rate=RATES[S.ver];
+    $('p-recv').textContent=fmt(r);
+    $('p-total').textContent='AED '+fmt(a+f,2);
+    $('p-fee').textContent='AED '+fmt(f,2);
+    $('p-rate').textContent='1 AED = '+rate.toFixed(2)+' INR';
+    $('p-eta').textContent=eta();
+    $('r-recv').textContent=fmt(r);
+    $('r-total').textContent='AED '+fmt(a+f,2);
+    $('r-amt').textContent='AED '+fmt(a,2);
+    $('r-fee').textContent='AED '+fmt(f,2);
+    $('r-rate').textContent='1 AED = '+rate.toFixed(2)+' INR';
+    $('r-eta').textContent='Estimated arrival '+eta().toLowerCase();
+    $('send').textContent='Send AED '+fmt(a);
+    $('send').nextElementSibling.textContent='You will be charged AED '+fmt(a+f,2)+' once. A duplicate tap is ignored.';
+    $('to-review').disabled=!a;
+  }
+
+  function tick(){
+    var left=Math.max(0,Math.round((S.expiresAt-Date.now())/1000));
+    var t=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');
+    $('p-clock').textContent=t;$('r-clock').textContent=t;
+    ['p-exp','r-exp'].forEach(function(id){$(id).classList.toggle('low',left<=20)});
+    if(left===0&&!S.expired){S.expired=true;onExpire()}
+  }
+  function onExpire(){
+    var cur=current();
+    if(cur==='review'){
+      S.oldRecv=recv();S.ver=1;renderQuote();
+      $('r-old').textContent='INR '+fmt(S.oldRecv);$('r-new').textContent='INR '+fmt(recv());
+      $('r-alert').hidden=false;
+      $('conf').checked=false;$('send').disabled=true;
+      lockQuote();
+    }else if(cur==='preview'){
+      S.ver=1;renderQuote();lockQuote();toast('Quote refreshed. New rate applied.');
+    }
+  }
+
+  function current(){var h=location.hash.slice(1);return screens.indexOf(h)>-1?h:'preview'}
+  function show(name){
+    screens.forEach(function(n){$('s-'+n).hidden=(n!==name)});
+    document.querySelectorAll('[data-go]').forEach(function(b){
+      if(b.dataset.go===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+    $('sheet').hidden=true;
+    if(name==='review'){S.amount=parse()||S.amount;renderQuote()}
+  }
+  function go(n){if(location.hash.slice(1)===n)show(n);else location.hash=n}
+  window.addEventListener('hashchange',function(){show(current())});
+
+  function toast(m){var t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true},2600)}
+  function copy(text,msg){
+    var done=function(){toast(msg)};
+    try{navigator.clipboard.writeText(text).then(done,function(){toast('Select and copy: '+text)})}
+    catch(e){toast('Select and copy: '+text)}
+  }
+
+  /* tracker */
+  var STEPS=[
+    {k:'processing',t:'Processing',d:'We received AED 1,008.00 and are preparing your transfer.',time:'14:05',src:'Careem Pay'},
+    {k:'sent',t:'Sent to recipient’s bank',d:'Handed to the payout partner and on its way to Bank of Baroda.',time:'14:12',src:'Confirmed by payout partner'},
+    {k:'delivered',t:'Delivered',d:'INR 23,840 credited to account •••• 4821.',time:'14:38',src:'Confirmed by recipient’s bank'}
+  ];
+  function renderTrack(){
+    var st=S.status, idx={processing:0,sent:1,delayed:1,delivered:2}[st], late=st==='delayed';
+    var html='';
+    STEPS.forEach(function(s,i){
+      var cls=i<idx||(st==='delivered')?'done':(i===idx?(late?'late':'now'):'future');
+      if(st==='delivered')cls='done';
+      var done=cls==='done';
+      var body=done?'<small>'+s.time+' · '+s.d+'</small><br><span class="src">'+s.src+'</span>'
+        : cls==='now'?'<small>'+s.d+'</small>'
+        : cls==='late'?'<small>Last confirmed step. Payout not confirmed yet.</small>':'<small>Not confirmed yet</small>';
+      if(late&&i===1)cls='late done-late';
+      html+='<li class="'+cls+'"><div class="node">'+(done?'✓':(late&&i===1?'!':''))+'</div><div><b>'+s.t+'</b>'+body+'</div></li>';
+    });
+    $('t-tl').innerHTML=html;
+    // in delayed state step 1 is confirmed: mark it done visually, add the waiting row
+    if(late){
+      var li=$('t-tl').children[1];li.className='done';li.querySelector('.node').textContent='✓';
+      li.querySelector('small').textContent='14:12 · Handed to the payout partner.';
+      li.querySelector('div:last-child').insertAdjacentHTML('beforeend','<br><span class="src">Last confirmed step</span>');
+      var d=$('t-tl').children[2];d.className='late';d.querySelector('.node').textContent='!';
+      d.querySelector('small').textContent='Waiting for partner bank. Expected by 14:50, now late.';
+    }
+    var pill=$('t-pill');pill.className='pill'+(late?' warn':'');
+    pill.textContent=late?'Delayed':st==='delivered'?'Delivered':'On track';
+    $('t-title').textContent={processing:'Your money is being processed',sent:'On its way to Ramesh’s bank',delayed:'Late, and we are on it',delivered:'Ramesh has received INR 23,840'}[st];
+    $('t-sub').textContent={processing:'Next update expected by 14:15',sent:'Estimated arrival today, 14:20 to 14:50',delayed:'Next update by 16:00 today',delivered:'Delivered at 14:38 · confirmed by the bank'}[st];
+    $('t-alert').hidden=!late;
+    $('help').className='btn '+(late?'warn':'ghost');
+    document.querySelectorAll('#state-chips .chip').forEach(function(c){c.setAttribute('aria-pressed',String(c.dataset.st===st))});
+  }
+
+  /* wiring */
+  $('amt').addEventListener('input',function(){S.amount=parse();renderQuote();lockQuote();S.ver=0;renderQuote()});
+  $('to-review').onclick=function(){go('review')};
+  $('back-preview').onclick=function(){go('preview')};
+  $('conf').onchange=function(){$('send').disabled=!$('conf').checked};
+  $('send').onclick=function(){
+    if(S.expired)return;
+    $('send').disabled=true;S.status='processing';renderTrack();go('track');
+  };
+  $('r-alert').addEventListener('click',function(){});
+  $('help').onclick=function(){$('sheet').hidden=false};
+  $('close-sheet').onclick=function(){$('sheet').hidden=true};
+  document.querySelectorAll('.opt').forEach(function(b){b.onclick=function(){
+    $('sheet').hidden=true;toast(b.dataset.h==='chat'?'Support chat opened with CP-7K2M-4491 attached (simulated).':'Payout trace requested. Update within 4 hours (simulated).')}});
+  $('copy-ref').onclick=function(){copy('CP-7K2M-4491','Reference copied')};
+  $('share').onclick=function(){
+    copy('Ramesh, I sent INR '+fmt(23840)+' to your Bank of Baroda account •••• 4821. Estimated arrival today 14:20 to 14:50. Reference CP-7K2M-4491.','Receipt text copied. Paste it into WhatsApp.')};
+  document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){go(b.dataset.go)}});
+  document.querySelectorAll('#state-chips .chip').forEach(function(c){c.onclick=function(){S.status=c.dataset.st;renderTrack();go('track')}});
+  $('expire').onclick=function(){S.expiresAt=Date.now()-1000;tick()};
+  $('reset').onclick=function(){S={amount:1000,ver:0,expiresAt:0,status:'processing',expired:false,oldRecv:0};
+    $('amt').value='1000';$('conf').checked=false;$('send').disabled=true;$('r-alert').hidden=true;lockQuote();renderQuote();renderTrack();go('preview')};
+
+  lockQuote();renderQuote();renderTrack();show(current());
+  setInterval(tick,500);tick();
+})();
+</script>
