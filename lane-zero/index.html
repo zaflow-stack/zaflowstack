@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lane Zero — The stories behind speed</title>
+<meta name="description" content="Lane Zero is a sprint newsroom. 60m to 400m, the lab, the athletes and the culture of speed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ RESULTS TICKER ============ -->
+<div class="ticker" aria-label="Latest results">
+  <div class="ticker__label"><span class="dot"></span>Results</div>
+  <div class="ticker__track">
+    <ul class="ticker__list">
+      <li><b>100M</b> Paris · Final <span>Lyles USA</span><em>9.79</em></li>
+      <li><b>100M</b> <span>Thompson JAM</span><em>9.79</em></li>
+      <li><b>100M</b> <span>Kerley USA</span><em>9.81</em></li>
+      <li><b>200M</b> Paris · Final <span>Tebogo BOT</span><em>19.46</em><i>AR</i></li>
+      <li><b>200M</b> <span>Bednarek USA</span><em>19.62</em></li>
+      <li><b>400M</b> Paris · Final <span>Hall USA</span><em>43.40</em></li>
+      <li><b>4×100</b> Paris · Final <span>Canada</span><em>37.50</em></li>
+      <li><b>60M</b> Glasgow · Final <span>Coleman USA</span><em>6.41</em></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="nav" id="top">
+  <a class="wordmark" href="#top" aria-label="Lane Zero home">LANE&nbsp;ZER<span>0</span></a>
+  <div class="nav__clock" aria-hidden="true"><span class="dot"></span>On the clock <span class="mono" id="clock">00:00.00</span></div>
+  <nav class="nav__links" aria-label="Primary">
+    <a href="#latest">Latest</a><a href="#desk">Race desk</a><a href="#grid">The Grid</a><a href="#lab">The Lab</a>
+  </nav>
+  <div class="nav__actions">
+    <button class="icon-btn" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg></button>
+    <a class="btn btn--line" href="#split">Subscribe</a>
+    <button class="btn btn--ink" id="lanesOpen" aria-expanded="false" aria-controls="lanes"><span class="burger"></span>Lanes</button>
+  </div>
+</header>
+
+<!-- ============ LANES OVERLAY ============ -->
+<div class="lanes" id="lanes" hidden>
+  <div class="lanes__head">
+    <span class="wordmark wordmark--light">LANE&nbsp;ZER<span>0</span></span>
+    <button class="btn btn--light" id="lanesClose">Close ✕</button>
+  </div>
+  <ol class="lanes__list">
+    <li><a href="#latest"><i>1</i>Latest<small>Everything, newest first</small></a></li>
+    <li><a href="#desk" data-dist="60"><i>2</i>60M<small>Indoor sprinting</small></a></li>
+    <li><a href="#desk" data-dist="100"><i>3</i>100M<small>Start to finish</small></a></li>
+    <li><a href="#desk" data-dist="200"><i>4</i>200M<small>The bend</small></a></li>
+    <li><a href="#desk" data-dist="400"><i>5</i>400M<small>One lap</small></a></li>
+    <li><a href="#lab"><i>6</i>The Lab<small>Technique explained</small></a></li>
+    <li><a href="#grid"><i>7</i>Athletes<small>Profiles</small></a></li>
+    <li><a href="#latest" data-filter="culture"><i>8</i>Culture<small>Rituals, kit, image</small></a></li>
+  </ol>
+</div>
+
+<main>
+
+<!-- ============ 01 COVER ============ -->
+<section class="cover" aria-label="Cover story">
+  <div class="cover__stage">
+    <div class="cover__meta mono"><span>01 · Cover story</span><span id="coverCount">01 / 04</span></div>
+
+    <div class="cover__slides">
+      <article class="slide is-active" data-i="0">
+        <figure class="slide__img"><img src="assets/img/hero-start.jpg" alt="Sprinters drive out of the blocks in a men's 100m heat"></figure>
+        <div class="slide__copy">
+          <p class="kicker"><span class="tag">The Lab</span> 100M · 12 min read</p>
+          <h1 class="display">The math<br>of 100 metres.</h1>
+          <p class="lede">Reaction, acceleration, top speed and the fight to hold it — a race that lasts under ten seconds, broken down phase by phase.</p>
+          <a class="btn btn--ink" href="#lab">Read story <span class="arr">→</span></a>
+        </div>
+      </article>
+      <article class="slide" data-i="1">
+        <figure class="slide__img"><img src="assets/img/hero-lyles.jpg" alt="Noah Lyles sprinting in the 100m"></figure>
+        <div class="slide__copy">
+          <p class="kicker"><span class="tag">Races</span> 100M · 9 min read</p>
+          <h1 class="display">Five<br>thousandths.</h1>
+          <p class="lede">Paris was decided by 0.005 seconds. Inside the closest Olympic 100m final ever run, frame by frame.</p>
+          <a class="btn btn--ink" href="#latest">Read story <span class="arr">→</span></a>
+        </div>
+      </article>
+      <article class="slide" data-i="2">
+        <figure class="slide__img"><img src="assets/img/hero-thompson.jpg" alt="Kishane Thompson racing"></figure>
+        <div class="slide__copy">
+          <p class="kicker"><span class="tag">Athletes</span> 100M · 7 min read</p>
+          <h1 class="display">The quiet<br>one in lane 4.</h1>
+          <p class="lede">Kishane Thompson barely speaks before a race. His splits do the talking.</p>
+          <a class="btn btn--ink" href="#grid">Read story <span class="arr">→</span></a>
+        </div>
+      </article>
+      <article class="slide" data-i="3">
+        <figure class="slide__img"><img src="assets/img/hero-omanyala.jpg" alt="Ferdinand Omanyala at the start line"></figure>
+        <div class="slide__copy">
+          <p class="kicker"><span class="tag">Culture</span> 100M · 6 min read</p>
+          <h1 class="display">Set.<br>Hold. Go.</h1>
+          <p class="lede">The 1.8 seconds between "set" and the gun, and the rituals sprinters build to survive them.</p>
+          <a class="btn btn--ink" href="#latest">Read story <span class="arr">→</span></a>
+        </div>
+      </article>
+    </div>
+
+    <div class="cover__readout mono" aria-hidden="true">
+      <div><small>R.T.</small><b>0.128</b></div>
+      <div><small>Top speed</small><b>43.2<span>km/h</span></b></div>
+      <div><small>Steps</small><b>44</b></div>
+    </div>
+
+    <div class="cover__bars" role="tablist" aria-label="Cover stories">
+      <button role="tab" aria-selected="true" data-go="0"><span></span><em>The math of 100 metres</em></button>
+      <button role="tab" aria-selected="false" data-go="1"><span></span><em>Five thousandths</em></button>
+      <button role="tab" aria-selected="false" data-go="2"><span></span><em>The quiet one in lane 4</em></button>
+      <button role="tab" aria-selected="false" data-go="3"><span></span><em>Set. Hold. Go.</em></button>
+    </div>
+  </div>
+
+  <aside class="index" aria-label="Lane index">
+    <div class="index__head mono"><span>Lane index</span><span>8 lanes</span></div>
+    <ol>
+      <li><a href="#latest"><i>1</i><b>Latest</b><small>Everything, newest first</small></a></li>
+      <li><a href="#desk" data-dist="60"><i>2</i><b>60M</b><small>Indoor sprinting</small></a></li>
+      <li><a href="#desk" data-dist="100"><i>3</i><b>100M</b><small>Start to finish</small></a></li>
+      <li><a href="#desk" data-dist="200"><i>4</i><b>200M</b><small>The bend</small></a></li>
+      <li><a href="#desk" data-dist="400"><i>5</i><b>400M</b><small>One lap</small></a></li>
+      <li><a href="#lab"><i>6</i><b>The Lab</b><small>Technique explained</small></a></li>
+      <li><a href="#grid"><i>7</i><b>Athletes</b><small>Profiles</small></a></li>
+      <li><a href="#latest" data-filter="culture"><i>8</i><b>Culture</b><small>Rituals, kit, image</small></a></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- ============ 02 LATEST ============ -->
+<section class="section" id="latest">
+  <header class="sec-head">
+    <h2><span class="num">02</span>Latest</h2>
+    <div class="chips" role="group" aria-label="Filter stories">
+      <button class="chip is-on" data-f="all">All</button>
+      <button class="chip" data-f="races">Races</button>
+      <button class="chip" data-f="lab">Lab</button>
+      <button class="chip" data-f="athletes">Athletes</button>
+      <button class="chip" data-f="culture">Culture</button>
+    </div>
+  </header>
+
+  <div class="latest">
+    <article class="card card--lead" data-cat="races">
+      <a href="#" class="card__img"><img src="assets/img/latest-bend.jpg" alt="Sprinters coming off the bend in a 200m"><span class="badge mono">Lane 6 · 19.46</span></a>
+      <p class="meta mono"><span class="cat">Races · 200M</span>7 Nov · 8 min</p>
+      <h3><a href="#">The bend: why the 200m is two races joined at the curve</a></h3>
+      <p class="excerpt">Centrifugal force costs the inside lanes up to a tenth. The best 200m runners learn to lean into it, then let go.</p>
+    </article>
+    <article class="card" data-cat="races">
+      <a href="#" class="card__img"><img src="assets/img/latest-400.jpg" alt="Athlete racing a 400m"></a>
+      <p class="meta mono"><span class="cat">400M</span>7 Nov · 6 min</p>
+      <h3><a href="#">One lap, three races: dividing the 400m</a></h3>
+    </article>
+    <article class="card" data-cat="lab">
+      <a href="#" class="card__img"><img src="assets/img/latest-60.jpg" alt="Men's 60 metres indoor final"></a>
+      <p class="meta mono"><span class="cat">60M</span>6 Nov · 5 min</p>
+      <h3><a href="#">What the 60m reveals that the 100m hides</a></h3>
+    </article>
+    <article class="card" data-cat="athletes">
+      <a href="#" class="card__img"><img src="assets/img/latest-jacobs.jpg" alt="Marcell Jacobs"></a>
+      <p class="meta mono"><span class="cat">Athletes</span>6 Nov · 7 min</p>
+      <h3><a href="#">From long jump pit to Olympic champion</a></h3>
+    </article>
+    <article class="card" data-cat="culture">
+      <a href="#" class="card__img"><img src="assets/img/latest-blocks.jpg" alt="Sprinters settling into their blocks"></a>
+      <p class="meta mono"><span class="cat">Culture</span>5 Nov · 4 min</p>
+      <h3><a href="#">The quiet ritual of setting the blocks</a></h3>
+    </article>
+  </div>
+</section>
+
+<!-- ============ 03 RACE DESK ============ -->
+<section class="section section--rule" id="desk">
+  <header class="sec-head">
+    <h2><span class="num">03</span>Race desk</h2>
+    <p class="sec-note">Pick a distance. Every story is filed by event.</p>
+  </header>
+
+  <div class="dist" role="tablist" aria-label="Distances">
+    <button role="tab" data-d="60"><small class="mono">9 stories</small><b>60</b></button>
+    <button role="tab" data-d="100" class="is-on" aria-selected="true"><small class="mono">24 stories</small><b>100</b></button>
+    <button role="tab" data-d="200"><small class="mono">18 stories</small><b>200</b></button>
+    <button role="tab" data-d="400"><small class="mono">15 stories</small><b>400</b></button>
+    <button role="tab" data-d="hr"><small class="mono">11 stories</small><b>H&amp;R</b></button>
+  </div>
+
+  <div class="desk">
+    <figure class="desk__img"><img id="deskImg" src="assets/img/desk-100.jpg" alt=""><figcaption class="mono" id="deskWR">WR 9.58 · Berlin 2009</figcaption></figure>
+    <div class="desk__copy">
+      <p class="kicker" id="deskKicker"><span class="tag tag--red">100M · Lead</span></p>
+      <h3 class="h-lg" id="deskTitle">Building the first 30 metres of a 100m race</h3>
+      <p class="lede" id="deskLede">Block clearance, shin angle and the slow rise of the torso.</p>
+      <ul class="desk__list" id="deskList">
+        <li><a href="#"><span class="mono">The Lab</span><b>How to read a reaction time</b><i>→</i></a></li>
+        <li><a href="#"><span class="mono">Races</span><b>Why sprinters lean at the line</b><i>→</i></a></li>
+        <li><a href="#"><span class="mono">Athletes</span><b>Ten seconds, ten years: a 100m career in splits</b><i>→</i></a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 THE GRID — PORTRAITS ============ -->
+<section class="grid-wall" id="grid" aria-label="The Grid, athlete portraits">
+  <header class="grid-wall__head">
+    <p class="mono"><span class="num">04</span>The Grid · Athlete files</p>
+    <h2 class="mega">Eight lanes.<br><span>Eight faces.</span></h2>
+    <p class="grid-wall__sub">The men who run the fastest ten seconds in sport, photographed the way they meet the line: head on.</p>
+  </header>
+
+  <ol class="faces">
+    <li class="face" data-pb="9.79" tabindex="0">
+      <span class="face__lane mono">Lane 1</span>
+      <img src="assets/img/p-lyles.jpg" alt="Portrait of Noah Lyles">
+      <div class="face__info"><small class="mono">USA · 100M / 200M</small><b>Noah Lyles</b><span class="mono pb">PB <em>9.79</em></span></div>
+    </li>
+    <li class="face" data-pb="9.75" tabindex="0">
+      <span class="face__lane mono">Lane 2</span>
+      <img src="assets/img/p-thompson.jpg" alt="Portrait of Kishane Thompson">
+      <div class="face__info"><small class="mono">JAM · 100M</small><b>Kishane Thompson</b><span class="mono pb">PB <em>9.75</em></span></div>
+    </li>
+    <li class="face" data-pb="9.76" tabindex="0">
+      <span class="face__lane mono">Lane 3</span>
+      <img src="assets/img/p-kerley.jpg" alt="Portrait of Fred Kerley">
+      <div class="face__info"><small class="mono">USA · 100M / 400M</small><b>Fred Kerley</b><span class="mono pb">PB <em>9.76</em></span></div>
+    </li>
+    <li class="face" data-pb="9.82" tabindex="0">
+      <span class="face__lane mono">Lane 4</span>
+      <img src="assets/img/p-simbine.jpg" alt="Portrait of Akani Simbine">
+      <div class="face__info"><small class="mono">RSA · 100M</small><b>Akani Simbine</b><span class="mono pb">PB <em>9.82</em></span></div>
+    </li>
+    <li class="face" data-pb="9.80" tabindex="0">
+      <span class="face__lane mono">Lane 5</span>
+      <img src="assets/img/p-jacobs.jpg" alt="Portrait of Marcell Jacobs">
+      <div class="face__info"><small class="mono">ITA · 100M</small><b>Marcell Jacobs</b><span class="mono pb">PB <em>9.80</em></span></div>
+    </li>
+    <li class="face" data-pb="9.81" tabindex="0">
+      <span class="face__lane mono">Lane 6</span>
+      <img src="assets/img/p-seville.jpg" alt="Portrait of Oblique Seville">
+      <div class="face__info"><small class="mono">JAM · 100M</small><b>Oblique Seville</b><span class="mono pb">PB <em>9.81</em></span></div>
+    </li>
+    <li class="face" data-pb="9.77" tabindex="0">
+      <span class="face__lane mono">Lane 7</span>
+      <img src="assets/img/p-omanyala.jpg" alt="Portrait of Ferdinand Omanyala">
+      <div class="face__info"><small class="mono">KEN · 100M</small><b>Ferdinand Omanyala</b><span class="mono pb">PB <em>9.77</em></span></div>
+    </li>
+    <li class="face" data-pb="9.86" tabindex="0">
+      <span class="face__lane mono">Lane 8</span>
+      <img src="assets/img/p-lyles2.jpg" alt="Portrait of Noah Lyles after a race">
+      <div class="face__info"><small class="mono">USA · 200M</small><b>Noah Lyles</b><span class="mono pb">200M <em>19.31</em></span></div>
+    </li>
+  </ol>
+
+  <div class="grid-wall__foot">
+    <p class="mono">Paris 2024 · Men's 100m final · Top eight separated by <b>0.12s</b></p>
+    <a href="#" class="btn btn--light">All athlete files <span class="arr">→</span></a>
+  </div>
+</section>
+
+<!-- ============ 05 THE LAB ============ -->
+<section class="lab" id="lab">
+  <div class="lab__intro">
+    <p class="mono"><span class="num">05</span>The Lab · Explainer</p>
+    <h2 class="h-xl">Inside the<br>first 30<br>metres.</h2>
+    <p class="lede">How the drive phase builds a sprint, step by step. Tap a phase.</p>
+    <a href="#" class="btn btn--red">Open the explainer <span class="arr">→</span></a>
+  </div>
+
+  <div class="lab__viz">
+    <div class="phase-stage">
+      <svg id="figure" viewBox="0 0 400 300" aria-hidden="true">
+        <line class="ground" x1="0" y1="270" x2="400" y2="270"/>
+        <g class="track-marks"><line x1="40" y1="270" x2="40" y2="282"/><line x1="140" y1="270" x2="140" y2="282"/><line x1="240" y1="270" x2="240" y2="282"/><line x1="340" y1="270" x2="340" y2="282"/></g>
+        <path id="angleArc" class="arc" d=""/>
+        <line id="angleRef" class="ref" x1="0" y1="0" x2="0" y2="0"/>
+        <polyline id="limbBack" class="limb limb--back" points=""/>
+        <polyline id="armBack" class="limb limb--back" points=""/>
+        <polyline id="body" class="limb" points=""/>
+        <polyline id="limbFront" class="limb" points=""/>
+        <polyline id="armFront" class="limb" points=""/>
+        <circle id="head" class="head" r="13" cx="0" cy="0"/>
+        <text id="angleTxt" class="angle-txt" x="0" y="0">45°</text>
+      </svg>
+      <div class="phase-readout mono"><span>Torso angle</span><b id="readAngle">45°</b><span>Distance</span><b id="readDist">0–1 m</b></div>
+    </div>
+    <ol class="phases" role="tablist">
+      <li><button role="tab" class="is-on" data-p="0"><i class="mono">01</i><b>Set</b><span>Hips above shoulders, weight on the hands.</span></button></li>
+      <li><button role="tab" data-p="1"><i class="mono">02</i><b>Drive</b><span>Long lean, pushing back behind the hips.</span></button></li>
+      <li><button role="tab" data-p="2"><i class="mono">03</i><b>Upright</b><span>Tall at top speed, feet under the hips.</span></button></li>
+      <li><button role="tab" data-p="3"><i class="mono">04</i><b>Finish</b><span>Torso dips. The race is timed to the torso.</span></button></li>
+    </ol>
+  </div>
+
+  <div class="splits">
+    <div class="splits__head"><p class="mono">10m splits · Men's 100m world record</p><p class="mono">Berlin 2009 · 9.58</p></div>
+    <div class="splits__bars" id="splits"></div>
+  </div>
+</section>
+
+<!-- ============ 06 MONDAY SPLIT ============ -->
+<section class="split" id="split">
+  <div class="split__copy">
+    <h2><span class="num">06</span>The Monday split</h2>
+    <p>One email. Every Monday. The weekend's fastest times and the stories behind them.</p>
+  </div>
+  <form class="split__form" novalidate>
+    <label class="sr" for="email">Email address</label>
+    <input id="email" type="email" placeholder="Email address" autocomplete="email" required>
+    <button class="btn btn--ink" type="submit">Sign up</button>
+    <p class="split__msg mono" aria-live="polite"></p>
+  </form>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="foot">
+  <div class="foot__brand">
+    <span class="wordmark wordmark--xl">LANE&nbsp;ZER<span>0</span></span>
+    <p class="mono">The stories behind speed.</p>
+  </div>
+  <nav class="foot__cols" aria-label="Footer">
+    <div><h4 class="mono">Lanes</h4><a href="#desk">60M</a><a href="#desk">100M</a><a href="#desk">200M</a><a href="#desk">400M</a></div>
+    <div><h4 class="mono">Read</h4><a href="#lab">The Lab</a><a href="#grid">Athletes</a><a href="#latest">Culture</a><a href="#">Archive</a></div>
+    <div><h4 class="mono">Lane Zero</h4><a href="#">About</a><a href="#split">Newsletter</a><a href="#">Contact</a></div>
+  </nav>
+  <div class="foot__base mono"><span>© 2026 Lane Zero</span><a href="#top">Back to the start ↑</a></div>
+  <div class="foot__giant" aria-hidden="true">LANE ZER<span>0</span></div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
