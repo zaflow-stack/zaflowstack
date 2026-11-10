@@ -1,0 +1,289 @@
+<title>SAVD</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one phone, centred; demo rail beside it on desktop (role switch, reset, step notes). Single committed look: warm paper + eggplant ink. */
+:root{
+  --ink:#22102E; --plum:#3A2147; --saffron:#FFB81C; --chili:#F0432F; --pista:#BFE36A;
+  --paper:#F8F3F5; --surface:#FFFFFF; --muted:#6F6378; --line:#E6DDE8; --backdrop:#E9E1EC;
+  --display:'Bricolage Grotesque','DM Sans',system-ui,sans-serif; --text:'DM Sans',system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--backdrop);color:var(--ink);font-family:var(--text);font-size:15px;line-height:1.45;
+  padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:20px 32px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--saffron);outline-offset:2px}
+.stage{max-width:940px;margin:0 auto;display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:36px;align-items:start;justify-content:center}
+@media (max-width:860px){.stage{grid-template-columns:minmax(0,1fr)}.phone{margin-inline:auto}}
+
+.phone{width:100%;max-width:390px;height:780px;background:var(--paper);border-radius:36px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(34,16,46,.22)}
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;padding:48px 20px 24px;gap:14px;overflow:auto}
+.scr[hidden]{display:none}
+@media (prefers-reduced-motion:no-preference){.scr{animation:in .28s ease-out}@keyframes in{from{opacity:0;transform:translateX(24px)}}}
+
+.wm{font-family:var(--display);font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--ink)}
+.wm i{font-style:normal;color:var(--saffron)}
+.wm.light{color:var(--paper)}
+h1,h2{font-family:var(--display);font-weight:800;letter-spacing:-.03em;margin:0;text-wrap:balance}
+.muted{color:var(--muted)}
+.btn{width:100%;border-radius:18px;padding:18px 20px;font-weight:700;font-size:17px;background:var(--chili);color:#fff;min-height:58px}
+.btn.alt{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn:active{transform:scale(.985)}
+.link{font-weight:600;color:var(--muted);font-size:14px;padding:8px}
+.dots{display:flex;gap:6px;align-items:center}
+.dots b{height:8px;width:8px;border-radius:4px;background:var(--line)}
+.dots b.on{width:24px;background:var(--chili)}
+
+/* splash */
+#splash{background:var(--ink);align-items:center;justify-content:center;gap:26px;padding-top:24px}
+.plate{width:88px;height:88px;border-radius:50%;background:var(--saffron);position:relative}
+.plate::before{content:"";position:absolute;inset:18px;border-radius:50%;background:var(--ink)}
+.plate::after{content:"";position:absolute;left:35px;top:35px;width:18px;height:18px;border-radius:50%;background:var(--chili)}
+#splash .tag{color:var(--line);text-align:center;max-width:250px;margin:0}
+#splash .dots b{background:var(--plum)}
+#splash .dots b.on{background:var(--chili)}
+@media (prefers-reduced-motion:no-preference){#splash .plate{animation:pop .7s cubic-bezier(.2,1.4,.4,1) both}@keyframes pop{from{transform:scale(.3);opacity:0}}}
+
+/* onboarding */
+.ob-top{display:flex;justify-content:space-between;align-items:center}
+.ill{height:330px;border-radius:28px;background:var(--plum);position:relative;overflow:hidden;flex:none}
+.ob h1{font-size:32px;line-height:1.1}
+.ob p{margin:0;color:var(--muted);font-size:16px}
+.ob .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.ob .foot .btn{width:auto;padding-inline:30px}
+.reelmock{position:absolute;left:86px;top:26px;width:170px;height:266px;border-radius:22px;background:var(--chili);overflow:hidden}
+.reelmock .d1{position:absolute;left:20px;top:56px;width:130px;height:130px;border-radius:50%;background:var(--saffron)}
+.reelmock .d2{position:absolute;left:50px;top:86px;width:70px;height:70px;border-radius:50%;background:var(--paper)}
+.reelmock small{position:absolute;left:12px;top:12px;color:#fff;font-size:10px;font-weight:500}
+.chip{position:absolute;background:var(--saffron);border-radius:20px;padding:9px 14px;font-weight:700;font-size:13px}
+.mrow{position:absolute;left:21px;right:21px;background:var(--surface);border-radius:20px;padding:14px 16px;display:flex;gap:12px;align-items:center;height:72px}
+.av{width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:700}
+.mrow b{display:block;font-size:15px}.mrow span{font-size:13px;color:var(--muted)}
+.mrow .st{margin-left:auto;font-size:12px;font-weight:700;padding:5px 10px;border-radius:12px;background:var(--paper)}
+.mrow .st.ready{background:var(--pista)}
+.rcpt{position:absolute;left:31px;top:26px;right:31px;background:var(--surface);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.rcpt .k{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted)}
+.rcpt .r{display:flex;justify-content:space-between;font-size:14px}
+.rcpt hr{border:0;border-top:1px solid var(--line);margin:2px 0;width:100%}
+.rcpt .tot{display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
+.rcpt .tot span:last-child{font-family:var(--display);font-size:20px;font-weight:800}
+.rcpt .cta{background:var(--chili);color:#fff;border-radius:14px;padding:14px;text-align:center;font-weight:700;font-size:14px}
+
+/* join */
+.field{background:var(--surface);border-radius:16px;box-shadow:inset 0 0 0 1.5px var(--line);padding:6px 6px 6px 18px;display:flex;align-items:center;gap:8px}
+.field input{border:0;outline:0;background:none;font:700 20px var(--text);letter-spacing:.12em;color:var(--ink);width:100%;min-width:0;padding:10px 0;text-transform:uppercase}
+.field button{background:var(--ink);color:var(--paper);font-weight:700;border-radius:12px;padding:12px 16px;font-size:14px}
+.inv{background:var(--ink);color:var(--paper);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.inv .k{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--saffron)}
+.inv h2{font-size:30px;color:var(--paper)}
+.inv .loc{display:flex;gap:8px;align-items:center;color:var(--line);font-size:14px}
+.pin{width:10px;height:10px;border-radius:50%;background:var(--chili);flex:none}
+.stack{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--line)}
+.stack .av{width:30px;height:30px;font-size:12px;color:var(--ink)}
+.stack .av+.av{margin-left:-14px}
+.err{color:var(--chili);font-size:13px;font-weight:600;min-height:18px}
+
+/* feed */
+.gh{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.gh h2{font-size:26px}
+.gh small{color:var(--muted);font-size:13px}
+.mem{display:flex}.mem .av{width:36px;height:36px;font-size:14px;color:var(--ink);box-shadow:0 0 0 2px var(--paper)}.mem .av+.av{margin-left:-8px}
+.ts{text-align:center;font-size:12px;font-weight:500;color:var(--muted)}
+.card{background:var(--surface);border-radius:28px;box-shadow:inset 0 0 0 1px var(--line),0 10px 30px rgba(240,67,47,.12);overflow:hidden;flex:none}
+.card .img{height:200px;background:var(--chili);position:relative}
+.card .img .d1{position:absolute;left:50%;top:26px;width:150px;height:150px;margin-left:-75px;border-radius:50%;background:var(--saffron)}
+.card .img .d2{position:absolute;left:50%;top:63px;width:76px;height:76px;margin-left:-38px;border-radius:50%;background:var(--paper)}
+.badge{position:absolute;left:14px;top:14px;background:var(--ink);color:var(--paper);font-size:12px;font-weight:700;padding:6px 11px;border-radius:14px}
+.ph{position:absolute;left:14px;bottom:10px;color:#fff;font-size:11px;font-weight:500}
+.card .body{padding:16px;display:flex;flex-direction:column;gap:11px}
+.by{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-weight:500}
+.by .av{width:24px;height:24px;font-size:11px;background:var(--pista);color:var(--ink)}
+.card h3{font-family:var(--display);font-weight:800;letter-spacing:-.02em;font-size:21px;line-height:1.2;margin:0}
+.meta{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.ok{background:var(--pista);color:var(--ink);font-weight:700;font-size:12px;padding:4px 10px;border-radius:10px;flex:none}
+.paste{margin-top:auto;display:flex;gap:8px;align-items:center;background:var(--surface);border-radius:20px;box-shadow:inset 0 0 0 1.5px var(--line);padding:6px 6px 6px 16px;flex:none}
+.paste input{border:0;outline:0;background:none;font:400 14px var(--text);color:var(--ink);width:100%;min-width:0;padding:10px 0}
+.paste button{background:var(--ink);color:var(--paper);font-weight:700;border-radius:14px;padding:12px 16px;font-size:13px}
+.toast{position:absolute;left:20px;right:20px;bottom:96px;background:var(--ink);color:var(--paper);padding:12px 16px;border-radius:14px;font-size:13px;font-weight:500;z-index:5}
+.toast[hidden]{display:none}
+
+/* rail */
+.rail{display:flex;flex-direction:column;gap:18px;min-width:0}
+.rail h1{font-size:30px;line-height:1.1}
+.rail .lead{margin:0;color:var(--muted)}
+.tagc{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.panel{background:var(--surface);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;box-shadow:inset 0 0 0 1px var(--line)}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--paper);border-radius:12px;padding:4px;gap:4px}
+.seg button{padding:10px;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.pill{box-shadow:inset 0 0 0 1px var(--line);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600}
+.steps{margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:4px}
+.steps li.done{color:var(--ink);font-weight:600}
+</style>
+
+<div class="stage">
+  <main class="phone" id="phone" aria-label="SAVD prototype">
+
+    <!-- Splash -->
+    <section class="scr" id="splash">
+      <div class="plate" aria-hidden="true"></div>
+      <div class="wm light" style="font-size:84px">sa<i>v</i>d</div>
+      <p class="tag">Ordering together is as easy as eating together.</p>
+      <div class="dots" aria-hidden="true"><b class="on"></b><b></b><b></b></div>
+    </section>
+
+    <!-- Onboarding 1-3 -->
+    <section class="scr ob" id="ob1" hidden>
+      <div class="ob-top"><div class="wm" style="font-size:28px">sa<i>v</i>d</div><button class="link" data-skip>Skip</button></div>
+      <div class="ill" role="img" aria-label="Illustration: a food reel with a restaurant match">
+        <div class="reelmock"><small>Placeholder · food reel</small><div class="d1"></div><div class="d2"></div></div>
+        <div class="chip" style="left:96px;top:282px">Found: Zaatar &amp; Co.</div>
+      </div>
+      <h1>Saw it in a reel.<br>Now it’s lunch.</h1>
+      <p>Share a food reel into your group. SAVD finds the restaurant so nobody has to hunt for it.</p>
+      <div class="foot"><div class="dots"><b class="on"></b><b></b><b></b></div><button class="btn" data-next>Next</button></div>
+    </section>
+    <section class="scr ob" id="ob2" hidden>
+      <div class="ob-top"><div class="wm" style="font-size:28px">sa<i>v</i>d</div><button class="link" data-skip>Skip</button></div>
+      <div class="ill" role="img" aria-label="Illustration: three members choosing their own meals">
+        <div class="mrow" style="top:34px"><div class="av" style="background:var(--pista)">M</div><div><b>Maya</b><span>Chicken shawarma plate</span></div><div class="st ready">Ready</div></div>
+        <div class="mrow" style="top:128px"><div class="av" style="background:var(--saffron)">O</div><div><b>Omar</b><span>Labneh wrap + fries</span></div><div class="st">Choosing</div></div>
+        <div class="mrow" style="top:222px"><div class="av" style="background:var(--chili);color:#fff">Y</div><div><b>You</b><span>Pick your meal</span></div><div class="st">Choosing</div></div>
+      </div>
+      <h1>Everyone picks<br>their own meal.</h1>
+      <p>No more collecting orders in the chat. Each person builds their own basket inside the group.</p>
+      <div class="foot"><div class="dots"><b></b><b class="on"></b><b></b></div><button class="btn" data-next>Next</button></div>
+    </section>
+    <section class="scr ob" id="ob3" hidden>
+      <div class="ob-top"><div class="wm" style="font-size:28px">sa<i>v</i>d</div><button class="link" data-skip></button></div>
+      <div class="ill" role="img" aria-label="Illustration: a personal share breakdown">
+        <div class="rcpt"><div class="k">YOUR SHARE</div>
+          <div class="r"><span>Chicken shawarma plate</span><span>AED 32.00</span></div>
+          <div class="r"><span>Delivery share (÷3)</span><span>AED 3.00</span></div>
+          <div class="r"><span>Service share (÷3)</span><span>AED 2.00</span></div><hr>
+          <div class="tot"><span>Total</span><span>AED 37.00</span></div>
+          <div class="cta">Confirm my share · AED 37</div></div>
+      </div>
+      <h1>Pay your share.<br>One order goes in.</h1>
+      <p>See your items and your part of delivery up front. The host never covers for anyone.</p>
+      <div class="foot"><div class="dots"><b></b><b></b><b class="on"></b></div><button class="btn" data-next>Get started</button></div>
+    </section>
+
+    <!-- Join or create -->
+    <section class="scr" id="join" hidden>
+      <div class="wm" style="font-size:28px">sa<i>v</i>d</div>
+      <h1 style="font-size:34px;line-height:1.1">Who’s eating with you?</h1>
+      <p class="muted" style="margin:0;font-size:16px">Enter an invite code or open a link from your group chat.</p>
+      <form class="field" id="codeForm" autocomplete="off">
+        <input id="code" aria-label="Invite code" value="OFFICE-4821" maxlength="14">
+        <button type="submit">Check</button>
+      </form>
+      <div class="err" id="codeErr" role="status"></div>
+      <div class="inv" id="invite" aria-live="polite">
+        <div class="k">YOU’VE BEEN INVITED TO</div>
+        <h2>Office Lunch</h2>
+        <div class="loc"><i class="pin"></i><span>Delivering to Emaar Square, Downtown Dubai</span></div>
+        <div class="stack"><span class="av" style="background:var(--pista)">M</span><span class="av" style="background:var(--saffron)">O</span><span>Maya and Omar are in</span></div>
+      </div>
+      <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">
+        <button class="btn" id="joinBtn">Join Office Lunch</button>
+        <button class="btn alt" id="createBtn">Create a new group</button>
+      </div>
+    </section>
+
+    <!-- Group feed -->
+    <section class="scr" id="feed" hidden>
+      <div class="gh"><div><h2>Office Lunch</h2><small>Emaar Square, Downtown · <span id="mcount">3</span> members</small></div>
+        <div class="mem" aria-label="Members"><span class="av" style="background:var(--pista)">M</span><span class="av" style="background:var(--saffron)">O</span><span class="av" style="background:var(--chili);color:#fff" id="meAv">Y</span></div></div>
+      <div class="ts">Maya shared a reel · 12:41</div>
+      <article class="card" id="reelCard">
+        <div class="img"><span class="badge">Instagram Reel</span><div class="d1"></div><div class="d2"></div><span class="ph">Placeholder · reel preview</span></div>
+        <div class="body">
+          <div class="by"><span class="av">M</span>Shared by Maya</div>
+          <h3>Zaatar &amp; Co. · Chicken shawarma plate</h3>
+          <div class="meta"><span class="ok">Matched</span><span>Dubai Marina branch · from AED 32 · 25 to 35 min</span></div>
+          <button class="btn" id="orderBtn">Order from this reel</button>
+          <button class="link" id="findBtn" style="text-align:center">Not the right place? Find the restaurant</button>
+        </div>
+      </article>
+      <form class="paste" id="pasteForm">
+        <input id="reelUrl" aria-label="Paste a reel link" placeholder="Paste an Instagram, TikTok or Shorts link">
+        <button type="submit">Share</button>
+      </form>
+      <div class="toast" id="toast" hidden></div>
+    </section>
+  </main>
+
+  <aside class="rail">
+    <div><div class="tagc">Careem Food product challenge · prototype</div><h1 style="font-size:32px">SAVD</h1>
+      <p class="lead">Ordering together is as easy as eating together.</p></div>
+    <div class="panel">
+      <div class="tagc">Demo role (shared state)</div>
+      <div class="seg" role="group" aria-label="Demo role">
+        <button id="roleHost" aria-pressed="true">Host · Maya</button>
+        <button id="roleMember" aria-pressed="false">Invited · You</button>
+      </div>
+      <div class="row"><button class="pill" id="replay">Replay splash and onboarding</button><button class="pill" id="reset">Reset</button></div>
+      <div class="tagc" style="margin-top:6px">Viewing as</div><div id="who" style="font-weight:600">Host (Maya) · already in the group</div>
+    </div>
+    <div class="panel">
+      <div class="tagc">Build plan</div>
+      <ol class="steps">
+        <li class="done">Splash, onboarding, join or create, group feed with reel card</li>
+        <li>Share a reel, match or find the restaurant</li>
+        <li>Host starts order: branch, address, cutoff</li>
+        <li>Menu, basket, Choosing and Ready states</li>
+        <li>Exact share, confirm, simulated payment</li>
+        <li>Place one order, track, edge cases</li>
+      </ol>
+      <div class="muted" style="font-size:12px">All names, restaurants, prices and links are mock data. No real payments.</div>
+    </div>
+  </aside>
+</div>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var S={role:'host',joined:false,seen:false};   // single shared state for both roles
+  var ORDER=['splash','ob1','ob2','ob3','join','feed'];
+  var toastT;
+  function show(id){ORDER.forEach(function(n){$(n).hidden=(n!==id)});if(id==='splash'){clearTimeout(show.t);show.t=setTimeout(function(){if(!$('splash').hidden)show('ob1')},1700)}}
+  function toast(m){var t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true},2600)}
+  function home(){ // where each role lands once onboarding is done
+    if(S.role==='host'||S.joined){show('feed')}else{show('join')}
+  }
+  function setRole(r){
+    S.role=r;
+    $('roleHost').setAttribute('aria-pressed',String(r==='host'));
+    $('roleMember').setAttribute('aria-pressed',String(r==='member'));
+    $('who').textContent=r==='host'?'Host (Maya) · already in the group':(S.joined?'Invited colleague (You) · joined Office Lunch':'Invited colleague (You) · has an invite link');
+    $('meAv').hidden=false;
+    $('mcount').textContent=(r==='host'&&!S.joined)?'2':'3';
+    if(!$('feed').hidden||!$('join').hidden){home()}
+  }
+  document.querySelectorAll('[data-next]').forEach(function(b){b.onclick=function(){var i=ORDER.indexOf(b.closest('.scr').id);if(ORDER[i+1]==='join'){S.seen=true;home()}else show(ORDER[i+1])}});
+  document.querySelectorAll('[data-skip]').forEach(function(b){b.onclick=function(){S.seen=true;home()}});
+  $('splash').onclick=function(){show('ob1')};
+  $('roleHost').onclick=function(){setRole('host')};
+  $('roleMember').onclick=function(){setRole('member')};
+  $('replay').onclick=function(){show('splash')};
+  $('reset').onclick=function(){S={role:'host',joined:false,seen:false};$('code').value='OFFICE-4821';$('codeErr').textContent='';$('reelUrl').value='';setRole('host');show('splash')};
+
+  $('codeForm').onsubmit=function(e){e.preventDefault();
+    var ok=/^OFFICE-?4821$/i.test($('code').value.replace(/\s/g,''));
+    $('codeErr').textContent=ok?'':'We can’t find that group. Check the code or ask whoever invited you.';
+    $('invite').style.opacity=ok?1:.35;$('joinBtn').disabled=!ok};
+  $('joinBtn').onclick=function(){S.joined=true;setRole(S.role);show('feed');toast('You joined Office Lunch.')};
+  $('createBtn').onclick=function(){toast('Create group comes in step 2 of the build.')};
+  $('orderBtn').onclick=function(){toast(S.role==='host'?'Next build step: confirm branch, address and cutoff.':'Only the host starts the order. You will see Join lunch order here.')};
+  $('findBtn').onclick=function(){toast('Find the restaurant comes in step 2 of the build.')};
+  $('pasteForm').onsubmit=function(e){e.preventDefault();
+    var v=$('reelUrl').value.trim();
+    var src=/instagram\.com\/reel/i.test(v)?'Instagram Reel':/tiktok\.com/i.test(v)?'TikTok':/youtube\.com\/shorts|youtu\.be/i.test(v)?'YouTube Shorts':null;
+    toast(src?src+' link accepted. Matching comes in step 2 of the build.':'Paste an Instagram Reel, TikTok or YouTube Shorts link.')};
+
+  setRole('host');show('splash');
+})();
+</script>
