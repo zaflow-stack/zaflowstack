@@ -52,10 +52,27 @@ Pages: Brief/research → Ideation (wordmark/type/colour trials, rough thumbnail
 Mid-fi grid → Hi-fi desktop + mobile → Prototype (clickable: Lanes overlay, desk tabs, cover carousel).
 Tone: realistic student working file — no explanatory annotations/footnotes.
 
-## Status
-See git log. Remaining items are tracked at the bottom of this file.
+## Figma file — what's where (fileKey KhsP7WU2CtqxRDoWdqZIca)
+| Page | Contents | Key nodes |
+|---|---|---|
+| 00 — Cover | submission cover (Kerley portrait, wordmark) | `25:2` |
+| 01 — Research | brief summary, reference board (from lecture deck), b/w athlete photo board | `24:2` `24:7` `24:14` |
+| 02 — Ideation | names, wordmark trials (Artavion picked), colour A/B/C, type, layout thumbnails v1–v4 + scribbles | `8:2` `8:16` `8:53` `8:85` `8:94` |
+| 03 — Lo-fi wireframe | student's original wireframe | `1:645` |
+| 04 — Mid-fi + grid | greyscale mid-fi, same with 12-col grid on, grid spec | `11:2` `23:2` `23:793` |
+| 05 — Hi-fi | desktop 1440 + mobile 390 (editable layers, b/w images baked) | `15:2` `16:2` |
+| 06 — Prototype | flow "Lane Zero — Homepage": nav scroll-to, Lanes overlay, Read story/cards → article, Back | `22:2` `22:803` `22:849` |
+
+Re-import hi-fi after site changes: `IMG_DIR=<bw dir> node lane-zero/tools/bundle.js out.html [mobile]`
+then `html_to_figma` (needs host `mcp.figma.com` allowed). B/W images: see the PIL snippet in git history / redo with grayscale+contrast.
+
+## Deliverables
+- `lane-zero/deliverables/LaneZero_UI_HomePage_Design.pdf` — final design single PDF (brief item 02)
+- Process deck PDF (brief item 01) — export Figma pages 00→06, add mockup + Figma link slide. NOT done yet.
 
 ## TODO
-- [ ] Finish portrait set (8 face-front real male sprinters) and crop
-- [ ] Figma: process pages + hi-fi + interactive prototype
-- [ ] Process deck PDF + final design PDF
+- [ ] Put real student name/ID on cover (`25:2`, text "NAME SURNAME · ID 000000") and in file names:
+      `LastName_FirstName_ID_UI HomePage Design Process.pdf` / `... Design.pdf`
+- [ ] Process deck PDF + device mockup of final
+- [ ] Optional: install Artavion in Figma so big numerals/headline "Eight lanes." render in Artavion (wordmark is already vector)
+- [ ] Optional: more lanes/states in prototype (race desk tabs as variants, cover carousel)
