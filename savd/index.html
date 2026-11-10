@@ -2,288 +2,387 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: one phone, centred; demo rail beside it on desktop (role switch, reset, step notes). Single committed look: warm paper + eggplant ink. */
+/* Layout: one phone, centred, with a demo rail beside it. Cream canvas, plum structure, tomato actions, lime only with a "Ready" text label. */
 :root{
-  --ink:#22102E; --plum:#3A2147; --saffron:#FFB81C; --chili:#F0432F; --pista:#BFE36A;
-  --paper:#F8F3F5; --surface:#FFFFFF; --muted:#6F6378; --line:#E6DDE8; --backdrop:#E9E1EC;
+  --cream:#FBF4E6; --surface:#FFFDF8; --plum:#21142E; --plum2:#3B2650; --tomato:#C6422D; --lime:#C6E24A;
+  --muted:#76687B; --line:#E8DDC8; --backdrop:#EADFC9;
   --display:'Bricolage Grotesque','DM Sans',system-ui,sans-serif; --text:'DM Sans',system-ui,sans-serif;
   color-scheme:light;
 }
 *{box-sizing:border-box}
-body{background:var(--backdrop);color:var(--ink);font-family:var(--text);font-size:15px;line-height:1.45;
+body{background:var(--backdrop);color:var(--plum);font-family:var(--text);font-size:15px;line-height:1.45;
   padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:20px 32px}
-button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
-:focus-visible{outline:3px solid var(--saffron);outline-offset:2px}
-.stage{max-width:940px;margin:0 auto;display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:36px;align-items:start;justify-content:center}
-@media (max-width:860px){.stage{grid-template-columns:minmax(0,1fr)}.phone{margin-inline:auto}}
-
-.phone{width:100%;max-width:390px;height:780px;background:var(--paper);border-radius:36px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(34,16,46,.22)}
-.scr{position:absolute;inset:0;display:flex;flex-direction:column;padding:48px 20px 24px;gap:14px;overflow:auto}
-.scr[hidden]{display:none}
-@media (prefers-reduced-motion:no-preference){.scr{animation:in .28s ease-out}@keyframes in{from{opacity:0;transform:translateX(24px)}}}
-
-.wm{font-family:var(--display);font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--ink)}
-.wm i{font-style:normal;color:var(--saffron)}
-.wm.light{color:var(--paper)}
-h1,h2{font-family:var(--display);font-weight:800;letter-spacing:-.03em;margin:0;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;text-align:inherit}
+:focus-visible{outline:3px solid var(--tomato);outline-offset:2px}
+.stage{max-width:980px;margin:0 auto;display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:36px;align-items:start;justify-content:center}
+@media (max-width:880px){.stage{grid-template-columns:minmax(0,1fr)}.phone{margin-inline:auto}}
+.phone{width:100%;max-width:390px;height:800px;background:var(--cream);border-radius:36px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(33,20,46,.25)}
+#app{flex:1;min-height:0;display:flex;flex-direction:column}
+.scr{flex:1;min-height:0;overflow:auto;padding:46px 20px 20px;display:flex;flex-direction:column;gap:14px}
+@media (prefers-reduced-motion:no-preference){.scr{animation:in .25s ease-out}@keyframes in{from{opacity:0;transform:translateX(18px)}}}
+h1,h2,h3{font-family:var(--display);font-weight:800;letter-spacing:-.03em;margin:0;text-wrap:balance}
+h1{font-size:30px;line-height:1.1}
 .muted{color:var(--muted)}
-.btn{width:100%;border-radius:18px;padding:18px 20px;font-weight:700;font-size:17px;background:var(--chili);color:#fff;min-height:58px}
-.btn.alt{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
-.btn:active{transform:scale(.985)}
-.link{font-weight:600;color:var(--muted);font-size:14px;padding:8px}
-.dots{display:flex;gap:6px;align-items:center}
-.dots b{height:8px;width:8px;border-radius:4px;background:var(--line)}
-.dots b.on{width:24px;background:var(--chili)}
+.k{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.btn{width:100%;border-radius:18px;padding:17px 20px;font-weight:700;font-size:17px;background:var(--tomato);color:#fff;min-height:58px;text-align:center;display:flex;gap:10px;align-items:center;justify-content:center}
+.btn.alt{background:var(--surface);color:var(--plum);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn.plum{background:var(--plum);color:var(--cream)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn:active:not([disabled]){transform:scale(.985)}
+.link{font-weight:600;color:var(--muted);font-size:14px;padding:8px;text-align:center}
+.cta{margin-top:auto;display:flex;flex-direction:column;gap:8px;position:sticky;bottom:-20px;background:linear-gradient(to top,var(--cream) 78%,transparent);padding:12px 0 20px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.back{width:40px;height:40px;border-radius:50%;background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--line);font-size:20px;text-align:center;line-height:40px;flex:none}
+.wm{height:26px;color:var(--plum);display:block}
+.av{width:34px;height:34px;border-radius:50%;flex:none;display:inline-grid;place-items:center;font-weight:700;font-size:13px;color:var(--plum)}
+.avs{display:flex}.avs .av+.av{margin-left:-8px}.avs .av{box-shadow:0 0 0 2px var(--cream)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:5px 10px;border-radius:10px;background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--line);white-space:nowrap}
+.chip.ok{background:var(--lime);box-shadow:none}
+.chip.no{background:#F6D9D2;color:#8A2A1A;box-shadow:none}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
 
 /* splash */
-#splash{background:var(--ink);align-items:center;justify-content:center;gap:26px;padding-top:24px}
-.plate{width:88px;height:88px;border-radius:50%;background:var(--saffron);position:relative}
-.plate::before{content:"";position:absolute;inset:18px;border-radius:50%;background:var(--ink)}
-.plate::after{content:"";position:absolute;left:35px;top:35px;width:18px;height:18px;border-radius:50%;background:var(--chili)}
-#splash .tag{color:var(--line);text-align:center;max-width:250px;margin:0}
-#splash .dots b{background:var(--plum)}
-#splash .dots b.on{background:var(--chili)}
-@media (prefers-reduced-motion:no-preference){#splash .plate{animation:pop .7s cubic-bezier(.2,1.4,.4,1) both}@keyframes pop{from{transform:scale(.3);opacity:0}}}
+.splash{background:var(--cream);align-items:center;justify-content:center;gap:18px;padding-top:30px;text-align:center}
+.splash .lock{display:flex;flex-direction:column;align-items:center;gap:6px}
+.splash p{margin:0;color:var(--muted);font-size:16px;max-width:250px}
+.splash .brandline{color:var(--plum);font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.02em;line-height:1.2;max-width:260px}
 
-/* onboarding */
-.ob-top{display:flex;justify-content:space-between;align-items:center}
-.ill{height:330px;border-radius:28px;background:var(--plum);position:relative;overflow:hidden;flex:none}
-.ob h1{font-size:32px;line-height:1.1}
-.ob p{margin:0;color:var(--muted);font-size:16px}
-.ob .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.ob .foot .btn{width:auto;padding-inline:30px}
-.reelmock{position:absolute;left:86px;top:26px;width:170px;height:266px;border-radius:22px;background:var(--chili);overflow:hidden}
-.reelmock .d1{position:absolute;left:20px;top:56px;width:130px;height:130px;border-radius:50%;background:var(--saffron)}
-.reelmock .d2{position:absolute;left:50px;top:86px;width:70px;height:70px;border-radius:50%;background:var(--paper)}
-.reelmock small{position:absolute;left:12px;top:12px;color:#fff;font-size:10px;font-weight:500}
-.chip{position:absolute;background:var(--saffron);border-radius:20px;padding:9px 14px;font-weight:700;font-size:13px}
-.mrow{position:absolute;left:21px;right:21px;background:var(--surface);border-radius:20px;padding:14px 16px;display:flex;gap:12px;align-items:center;height:72px}
-.av{width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:700}
-.mrow b{display:block;font-size:15px}.mrow span{font-size:13px;color:var(--muted)}
-.mrow .st{margin-left:auto;font-size:12px;font-weight:700;padding:5px 10px;border-radius:12px;background:var(--paper)}
-.mrow .st.ready{background:var(--pista)}
-.rcpt{position:absolute;left:31px;top:26px;right:31px;background:var(--surface);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:10px}
-.rcpt .k{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted)}
-.rcpt .r{display:flex;justify-content:space-between;font-size:14px}
-.rcpt hr{border:0;border-top:1px solid var(--line);margin:2px 0;width:100%}
-.rcpt .tot{display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
-.rcpt .tot span:last-child{font-family:var(--display);font-size:20px;font-weight:800}
-.rcpt .cta{background:var(--chili);color:#fff;border-radius:14px;padding:14px;text-align:center;font-weight:700;font-size:14px}
+/* dish art */
+.art{position:relative;overflow:hidden;background:#F2C777}
+.art svg{display:block;width:100%;height:100%}
+.art small{position:absolute;right:10px;bottom:8px;font-size:10px;font-weight:600;color:rgba(33,20,46,.55)}
 
-/* join */
-.field{background:var(--surface);border-radius:16px;box-shadow:inset 0 0 0 1.5px var(--line);padding:6px 6px 6px 18px;display:flex;align-items:center;gap:8px}
-.field input{border:0;outline:0;background:none;font:700 20px var(--text);letter-spacing:.12em;color:var(--ink);width:100%;min-width:0;padding:10px 0;text-transform:uppercase}
-.field button{background:var(--ink);color:var(--paper);font-weight:700;border-radius:12px;padding:12px 16px;font-size:14px}
-.inv{background:var(--ink);color:var(--paper);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:10px}
-.inv .k{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--saffron)}
-.inv h2{font-size:30px;color:var(--paper)}
-.inv .loc{display:flex;gap:8px;align-items:center;color:var(--line);font-size:14px}
-.pin{width:10px;height:10px;border-radius:50%;background:var(--chili);flex:none}
-.stack{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--line)}
-.stack .av{width:30px;height:30px;font-size:12px;color:var(--ink)}
-.stack .av+.av{margin-left:-14px}
-.err{color:var(--chili);font-size:13px;font-weight:600;min-height:18px}
-
-/* feed */
-.gh{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.gh h2{font-size:26px}
-.gh small{color:var(--muted);font-size:13px}
-.mem{display:flex}.mem .av{width:36px;height:36px;font-size:14px;color:var(--ink);box-shadow:0 0 0 2px var(--paper)}.mem .av+.av{margin-left:-8px}
-.ts{text-align:center;font-size:12px;font-weight:500;color:var(--muted)}
-.card{background:var(--surface);border-radius:28px;box-shadow:inset 0 0 0 1px var(--line),0 10px 30px rgba(240,67,47,.12);overflow:hidden;flex:none}
-.card .img{height:200px;background:var(--chili);position:relative}
-.card .img .d1{position:absolute;left:50%;top:26px;width:150px;height:150px;margin-left:-75px;border-radius:50%;background:var(--saffron)}
-.card .img .d2{position:absolute;left:50%;top:63px;width:76px;height:76px;margin-left:-38px;border-radius:50%;background:var(--paper)}
-.badge{position:absolute;left:14px;top:14px;background:var(--ink);color:var(--paper);font-size:12px;font-weight:700;padding:6px 11px;border-radius:14px}
-.ph{position:absolute;left:14px;bottom:10px;color:#fff;font-size:11px;font-weight:500}
-.card .body{padding:16px;display:flex;flex-direction:column;gap:11px}
-.by{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-weight:500}
-.by .av{width:24px;height:24px;font-size:11px;background:var(--pista);color:var(--ink)}
-.card h3{font-family:var(--display);font-weight:800;letter-spacing:-.02em;font-size:21px;line-height:1.2;margin:0}
-.meta{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
-.ok{background:var(--pista);color:var(--ink);font-weight:700;font-size:12px;padding:4px 10px;border-radius:10px;flex:none}
-.paste{margin-top:auto;display:flex;gap:8px;align-items:center;background:var(--surface);border-radius:20px;box-shadow:inset 0 0 0 1.5px var(--line);padding:6px 6px 6px 16px;flex:none}
-.paste input{border:0;outline:0;background:none;font:400 14px var(--text);color:var(--ink);width:100%;min-width:0;padding:10px 0}
-.paste button{background:var(--ink);color:var(--paper);font-weight:700;border-radius:14px;padding:12px 16px;font-size:13px}
-.toast{position:absolute;left:20px;right:20px;bottom:96px;background:var(--ink);color:var(--paper);padding:12px 16px;border-radius:14px;font-size:13px;font-weight:500;z-index:5}
+/* cards */
+.card{background:var(--surface);border-radius:26px;box-shadow:inset 0 0 0 1px var(--line);overflow:hidden;flex:none}
+.card.hero{box-shadow:inset 0 0 0 1px var(--line),0 10px 28px rgba(198,66,45,.14)}
+.card .art{height:170px}
+.card .body{padding:16px;display:flex;flex-direction:column;gap:10px}
+.card h3{font-size:22px;line-height:1.15}
+.src{position:absolute;left:12px;top:12px;background:var(--plum);color:var(--cream);font-size:12px;font-weight:700;padding:6px 11px;border-radius:14px;z-index:2}
+.sub{font-size:13px;color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center}
+.grow{flex:1;min-width:0}
+.sig{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--cream);border-radius:12px;padding:3px}
+.sig button{padding:8px 4px;border-radius:9px;font-size:12px;font-weight:700;text-align:center;color:var(--muted)}
+.sig button[aria-pressed="true"]{background:var(--plum);color:var(--cream)}
+.lock{display:inline-flex;gap:6px;align-items:center}
+.note{background:var(--surface);border-radius:14px;padding:11px 14px;font-size:13px;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.field{display:flex;gap:8px;align-items:center;background:var(--surface);border-radius:16px;box-shadow:inset 0 0 0 1.5px var(--line);padding:5px 5px 5px 16px}
+.field input{border:0;outline:0;background:none;font:400 15px var(--text);color:var(--plum);width:100%;min-width:0;padding:10px 0}
+.field button{background:var(--plum);color:var(--cream);font-weight:700;border-radius:12px;padding:12px 14px;font-size:13px;white-space:nowrap}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border-top:1px solid var(--line);padding:8px 12px 14px;gap:8px;flex:none}
+.tabs button{padding:10px;border-radius:14px;font-weight:700;font-size:14px;text-align:center;color:var(--muted)}
+.tabs button[aria-current="page"]{background:var(--plum);color:var(--cream)}
+.toast{position:absolute;left:20px;right:20px;bottom:88px;background:var(--plum);color:var(--cream);padding:12px 16px;border-radius:14px;font-size:13px;font-weight:500;z-index:9}
 .toast[hidden]{display:none}
 
+/* find our lunch */
+.who{display:flex;gap:8px;flex-wrap:wrap}
+.who button{display:flex;gap:8px;align-items:center;padding:6px 12px 6px 6px;border-radius:24px;background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--line);font-weight:600;font-size:13px}
+.who button[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--plum)}
+.who button[aria-pressed="false"]{opacity:.5}
+.who small{display:block;font-weight:500;color:var(--muted);font-size:11px}
+.step{display:flex;align-items:center;gap:10px}
+.step button{width:36px;height:36px;border-radius:12px;background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--line);font-size:18px;font-weight:700;text-align:center}
+.step b{font-family:var(--display);font-size:22px;min-width:78px;text-align:center}
+.why{font-size:14px;color:var(--plum);margin:0}
+.alt{display:flex;gap:12px;align-items:center;padding:12px;background:var(--surface);border-radius:20px;box-shadow:inset 0 0 0 1px var(--line)}
+.alt .art{width:72px;height:72px;border-radius:16px;flex:none}
+.left{display:flex;flex-direction:column;gap:8px}
+.left div{font-size:13px;color:var(--muted)}
+.left b{color:var(--plum)}
+.seg2{display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border-radius:12px;padding:3px;gap:3px;box-shadow:inset 0 0 0 1px var(--line)}
+.seg2 button{padding:9px;border-radius:9px;font-size:13px;font-weight:700;text-align:center;color:var(--muted)}
+.seg2 button[aria-pressed="true"]{background:var(--plum);color:var(--cream)}
+
+/* cart */
+.mrow{display:flex;gap:12px;align-items:center;padding:12px;border-radius:18px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)}
+.mrow.me{box-shadow:inset 0 0 0 2px var(--plum)}
+.st{font-size:12px;font-weight:700;padding:5px 10px;border-radius:10px;background:var(--cream);box-shadow:inset 0 0 0 1.5px var(--line);flex:none}
+.st.ready{background:var(--lime);box-shadow:none}
+.item{display:flex;gap:12px;align-items:center;padding:13px 14px;border-radius:16px;background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--line);width:100%}
+.item[aria-pressed="true"]{box-shadow:inset 0 0 0 2.5px var(--plum)}
+.item[disabled]{opacity:.45;cursor:not-allowed}
+.item b{display:block;font-size:15px}.item span{font-size:12px;color:var(--muted)}
+.item .p{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums}
+.sum{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.sum div{display:flex;justify-content:space-between}
+.sum .tot{font-weight:800;font-size:17px;border-top:1px solid var(--line);padding-top:8px}
+.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+.tl li{display:flex;gap:12px;padding-bottom:14px;position:relative;font-weight:600}
+.tl li::before{content:"";position:absolute;left:9px;top:22px;bottom:0;width:2px;background:var(--line)}
+.tl li:last-child::before{display:none}
+.tl i{width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--line);flex:none;background:var(--cream)}
+.tl li.done i{background:var(--plum);box-shadow:none}
+.tl li.now i{box-shadow:0 0 0 4px var(--tomato) inset}
+.tl li.future{color:var(--muted);font-weight:500}
+
 /* rail */
-.rail{display:flex;flex-direction:column;gap:18px;min-width:0}
-.rail h1{font-size:30px;line-height:1.1}
-.rail .lead{margin:0;color:var(--muted)}
-.tagc{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.rail{display:flex;flex-direction:column;gap:16px;min-width:0}
 .panel{background:var(--surface);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;box-shadow:inset 0 0 0 1px var(--line)}
-.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--paper);border-radius:12px;padding:4px;gap:4px}
-.seg button{padding:10px;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted)}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.pill{box-shadow:inset 0 0 0 1px var(--line);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600}
-.steps{margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:4px}
-.steps li.done{color:var(--ink);font-weight:600}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--cream);border-radius:12px;padding:4px;gap:4px}
+.seg button{padding:10px 6px;border-radius:9px;font-weight:700;font-size:13px;color:var(--muted);text-align:center}
+.seg button[aria-pressed="true"]{background:var(--plum);color:var(--cream)}
+.pill{box-shadow:inset 0 0 0 1px var(--line);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;background:var(--cream)}
+.rail ol{margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:4px}
+.rail li.done{color:var(--plum);font-weight:600}
 </style>
 
 <div class="stage">
-  <main class="phone" id="phone" aria-label="SAVD prototype">
-
-    <!-- Splash -->
-    <section class="scr" id="splash">
-      <div class="plate" aria-hidden="true"></div>
-      <div class="wm light" style="font-size:84px">sa<i>v</i>d</div>
-      <p class="tag">Ordering together is as easy as eating together.</p>
-      <div class="dots" aria-hidden="true"><b class="on"></b><b></b><b></b></div>
-    </section>
-
-    <!-- Onboarding 1-3 -->
-    <section class="scr ob" id="ob1" hidden>
-      <div class="ob-top"><div class="wm" style="font-size:28px">sa<i>v</i>d</div><button class="link" data-skip>Skip</button></div>
-      <div class="ill" role="img" aria-label="Illustration: a food reel with a restaurant match">
-        <div class="reelmock"><small>Placeholder · food reel</small><div class="d1"></div><div class="d2"></div></div>
-        <div class="chip" style="left:96px;top:282px">Found: Zaatar &amp; Co.</div>
-      </div>
-      <h1>Saw it in a reel.<br>Now it’s lunch.</h1>
-      <p>Share a food reel into your group. SAVD finds the restaurant so nobody has to hunt for it.</p>
-      <div class="foot"><div class="dots"><b class="on"></b><b></b><b></b></div><button class="btn" data-next>Next</button></div>
-    </section>
-    <section class="scr ob" id="ob2" hidden>
-      <div class="ob-top"><div class="wm" style="font-size:28px">sa<i>v</i>d</div><button class="link" data-skip>Skip</button></div>
-      <div class="ill" role="img" aria-label="Illustration: three members choosing their own meals">
-        <div class="mrow" style="top:34px"><div class="av" style="background:var(--pista)">M</div><div><b>Maya</b><span>Chicken shawarma plate</span></div><div class="st ready">Ready</div></div>
-        <div class="mrow" style="top:128px"><div class="av" style="background:var(--saffron)">O</div><div><b>Omar</b><span>Labneh wrap + fries</span></div><div class="st">Choosing</div></div>
-        <div class="mrow" style="top:222px"><div class="av" style="background:var(--chili);color:#fff">Y</div><div><b>You</b><span>Pick your meal</span></div><div class="st">Choosing</div></div>
-      </div>
-      <h1>Everyone picks<br>their own meal.</h1>
-      <p>No more collecting orders in the chat. Each person builds their own basket inside the group.</p>
-      <div class="foot"><div class="dots"><b></b><b class="on"></b><b></b></div><button class="btn" data-next>Next</button></div>
-    </section>
-    <section class="scr ob" id="ob3" hidden>
-      <div class="ob-top"><div class="wm" style="font-size:28px">sa<i>v</i>d</div><button class="link" data-skip></button></div>
-      <div class="ill" role="img" aria-label="Illustration: a personal share breakdown">
-        <div class="rcpt"><div class="k">YOUR SHARE</div>
-          <div class="r"><span>Chicken shawarma plate</span><span>AED 32.00</span></div>
-          <div class="r"><span>Delivery share (÷3)</span><span>AED 3.00</span></div>
-          <div class="r"><span>Service share (÷3)</span><span>AED 2.00</span></div><hr>
-          <div class="tot"><span>Total</span><span>AED 37.00</span></div>
-          <div class="cta">Confirm my share · AED 37</div></div>
-      </div>
-      <h1>Pay your share.<br>One order goes in.</h1>
-      <p>See your items and your part of delivery up front. The host never covers for anyone.</p>
-      <div class="foot"><div class="dots"><b></b><b></b><b class="on"></b></div><button class="btn" data-next>Get started</button></div>
-    </section>
-
-    <!-- Join or create -->
-    <section class="scr" id="join" hidden>
-      <div class="wm" style="font-size:28px">sa<i>v</i>d</div>
-      <h1 style="font-size:34px;line-height:1.1">Who’s eating with you?</h1>
-      <p class="muted" style="margin:0;font-size:16px">Enter an invite code or open a link from your group chat.</p>
-      <form class="field" id="codeForm" autocomplete="off">
-        <input id="code" aria-label="Invite code" value="OFFICE-4821" maxlength="14">
-        <button type="submit">Check</button>
-      </form>
-      <div class="err" id="codeErr" role="status"></div>
-      <div class="inv" id="invite" aria-live="polite">
-        <div class="k">YOU’VE BEEN INVITED TO</div>
-        <h2>Office Lunch</h2>
-        <div class="loc"><i class="pin"></i><span>Delivering to Emaar Square, Downtown Dubai</span></div>
-        <div class="stack"><span class="av" style="background:var(--pista)">M</span><span class="av" style="background:var(--saffron)">O</span><span>Maya and Omar are in</span></div>
-      </div>
-      <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">
-        <button class="btn" id="joinBtn">Join Office Lunch</button>
-        <button class="btn alt" id="createBtn">Create a new group</button>
-      </div>
-    </section>
-
-    <!-- Group feed -->
-    <section class="scr" id="feed" hidden>
-      <div class="gh"><div><h2>Office Lunch</h2><small>Emaar Square, Downtown · <span id="mcount">3</span> members</small></div>
-        <div class="mem" aria-label="Members"><span class="av" style="background:var(--pista)">M</span><span class="av" style="background:var(--saffron)">O</span><span class="av" style="background:var(--chili);color:#fff" id="meAv">Y</span></div></div>
-      <div class="ts">Maya shared a reel · 12:41</div>
-      <article class="card" id="reelCard">
-        <div class="img"><span class="badge">Instagram Reel</span><div class="d1"></div><div class="d2"></div><span class="ph">Placeholder · reel preview</span></div>
-        <div class="body">
-          <div class="by"><span class="av">M</span>Shared by Maya</div>
-          <h3>Zaatar &amp; Co. · Chicken shawarma plate</h3>
-          <div class="meta"><span class="ok">Matched</span><span>Dubai Marina branch · from AED 32 · 25 to 35 min</span></div>
-          <button class="btn" id="orderBtn">Order from this reel</button>
-          <button class="link" id="findBtn" style="text-align:center">Not the right place? Find the restaurant</button>
-        </div>
-      </article>
-      <form class="paste" id="pasteForm">
-        <input id="reelUrl" aria-label="Paste a reel link" placeholder="Paste an Instagram, TikTok or Shorts link">
-        <button type="submit">Share</button>
-      </form>
-      <div class="toast" id="toast" hidden></div>
-    </section>
-  </main>
-
+  <main class="phone" id="phone" aria-label="SAVD prototype"><div id="app"></div><div class="toast" id="toast" hidden></div></main>
   <aside class="rail">
-    <div><div class="tagc">Careem Food product challenge · prototype</div><h1 style="font-size:32px">SAVD</h1>
-      <p class="lead">Ordering together is as easy as eating together.</p></div>
+    <div><div class="k">Careem Food product challenge · prototype</div>
+      <div id="railLogo" style="margin-top:8px"></div>
+      <p class="muted" style="margin:6px 0 0;font-size:16px">Save what looks good. Order what works for everyone.</p></div>
     <div class="panel">
-      <div class="tagc">Demo role (shared state)</div>
-      <div class="seg" role="group" aria-label="Demo role">
-        <button id="roleHost" aria-pressed="true">Host · Maya</button>
-        <button id="roleMember" aria-pressed="false">Invited · You</button>
-      </div>
-      <div class="row"><button class="pill" id="replay">Replay splash and onboarding</button><button class="pill" id="reset">Reset</button></div>
-      <div class="tagc" style="margin-top:6px">Viewing as</div><div id="who" style="font-weight:600">Host (Maya) · already in the group</div>
+      <div class="k">Demo role · all three share one state</div>
+      <div class="seg" id="seg" role="group" aria-label="Demo role"></div>
+      <div class="row" style="flex-wrap:wrap"><button class="pill" id="replay">Replay Maya’s first save</button><button class="pill" id="reset">Reset demo</button></div>
+      <div class="k" style="margin-top:4px">Viewing as</div><div id="who" style="font-weight:600"></div>
     </div>
     <div class="panel">
-      <div class="tagc">Build plan</div>
-      <ol class="steps">
-        <li class="done">Splash, onboarding, join or create, group feed with reel card</li>
-        <li>Share a reel, match or find the restaurant</li>
-        <li>Host starts order: branch, address, cutoff</li>
-        <li>Menu, basket, Choosing and Ready states</li>
-        <li>Exact share, confirm, simulated payment</li>
-        <li>Place one order, track, edge cases</li>
+      <div class="k">60-second path</div>
+      <ol>
+        <li>Maya (host): save the sample reel, open Group, tap Find our lunch</li>
+        <li>See why Zaatar &amp; Co. beats the burger spot, open the group cart</li>
+        <li>Switch to Omar, then Layla: pick a meal, confirm share</li>
+        <li>Back to Maya: place one order, everyone sees the same status</li>
+        <li>On Find our lunch, tap “Price + distance” to compare the baseline</li>
       </ol>
-      <div class="muted" style="font-size:12px">All names, restaurants, prices and links are mock data. No real payments.</div>
+      <div class="muted" style="font-size:12px">All names, restaurants, prices, saves and payments are mock data. Dish images are drawn illustrations, not photos.</div>
     </div>
   </aside>
 </div>
 
 <script>
 (function(){
-  var $=function(i){return document.getElementById(i)};
-  var S={role:'host',joined:false,seen:false};   // single shared state for both roles
-  var ORDER=['splash','ob1','ob2','ob3','join','feed'];
-  var toastT;
-  function show(id){ORDER.forEach(function(n){$(n).hidden=(n!==id)});if(id==='splash'){clearTimeout(show.t);show.t=setTimeout(function(){if(!$('splash').hidden)show('ob1')},1700)}}
-  function toast(m){var t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true},2600)}
-  function home(){ // where each role lands once onboarding is done
-    if(S.role==='host'||S.joined){show('feed')}else{show('join')}
-  }
-  function setRole(r){
-    S.role=r;
-    $('roleHost').setAttribute('aria-pressed',String(r==='host'));
-    $('roleMember').setAttribute('aria-pressed',String(r==='member'));
-    $('who').textContent=r==='host'?'Host (Maya) · already in the group':(S.joined?'Invited colleague (You) · joined Office Lunch':'Invited colleague (You) · has an invite link');
-    $('meAv').hidden=false;
-    $('mcount').textContent=(r==='host'&&!S.joined)?'2':'3';
-    if(!$('feed').hidden||!$('join').hidden){home()}
-  }
-  document.querySelectorAll('[data-next]').forEach(function(b){b.onclick=function(){var i=ORDER.indexOf(b.closest('.scr').id);if(ORDER[i+1]==='join'){S.seen=true;home()}else show(ORDER[i+1])}});
-  document.querySelectorAll('[data-skip]').forEach(function(b){b.onclick=function(){S.seen=true;home()}});
-  $('splash').onclick=function(){show('ob1')};
-  $('roleHost').onclick=function(){setRole('host')};
-  $('roleMember').onclick=function(){setRole('member')};
-  $('replay').onclick=function(){show('splash')};
-  $('reset').onclick=function(){S={role:'host',joined:false,seen:false};$('code').value='OFFICE-4821';$('codeErr').textContent='';$('reelUrl').value='';setRole('host');show('splash')};
+var MARK='M121 49H199Q216 49 216 66V166Q216 174 209 170L160 140L111 170Q104 174 104 166V66Q104 49 121 49Z M130 96C131 83 143 73 160 73C177 73 189 83 190 96Q190 100 186 100H134Q130 100 130 96Z M132 106H188Q191 106 191 109.5Q191 113 188 113H132Q129 113 129 109.5Q129 106 132 106Z M134 119H186Q190 119 189 123C188 130 183 133 176 133H144C137 133 132 130 131 123Q130 119 134 119Z';
+var WORD='<path style="fill:currentColor" transform="translate(75.607 250) scale(0.03808594 -0.03808594)" d="M1055 316Q1055 159 926.5 69.5Q798 -20 571 -20Q348 -20 229.5 50.5Q111 121 72 270L319 307Q340 230 391.5 198.0Q443 166 571 166Q689 166 743.0 196.0Q797 226 797 290Q797 342 753.5 372.5Q710 403 606 424Q368 471 285.0 511.5Q202 552 158.5 616.5Q115 681 115 775Q115 930 234.5 1016.5Q354 1103 573 1103Q766 1103 883.5 1028.0Q1001 953 1030 811L781 785Q769 851 722.0 883.5Q675 916 573 916Q473 916 423.0 890.5Q373 865 373 805Q373 758 411.5 730.5Q450 703 541 685Q668 659 766.5 631.5Q865 604 924.5 566.0Q984 528 1019.5 468.5Q1055 409 1055 316Z"/> <path style="fill:var(--tomato)" transform="translate(115.987 250) scale(0.03808594 -0.03808594)" d="M393 -20Q236 -20 148.0 65.5Q60 151 60 306Q60 474 169.5 562.0Q279 650 487 652L720 656V711Q720 817 683.0 868.5Q646 920 562 920Q484 920 447.5 884.5Q411 849 402 767L109 781Q136 939 253.5 1020.5Q371 1102 574 1102Q779 1102 890.0 1001.0Q1001 900 1001 714V320Q1001 229 1021.5 194.5Q1042 160 1090 160Q1122 160 1152 166V14Q1127 8 1107.0 3.0Q1087 -2 1067.0 -5.0Q1047 -8 1024.5 -10.0Q1002 -12 972 -12Q866 -12 815.5 40.0Q765 92 755 193H749Q631 -20 393 -20ZM720 501 576 499Q478 495 437.0 477.5Q396 460 374.5 424.0Q353 388 353 328Q353 251 388.5 213.5Q424 176 483 176Q549 176 603.5 212.0Q658 248 689.0 311.5Q720 375 720 446Z"/> <path style="fill:currentColor" transform="translate(156.367 250) scale(0.03808594 -0.03808594)" d="M731 0H395L8 1082H305L494 477Q509 427 565 227Q575 268 606.0 371.0Q637 474 836 1082H1130Z"/> <path style="fill:currentColor" transform="translate(196.747 250) scale(0.03808594 -0.03808594)" d="M844 0Q840 15 834.5 75.5Q829 136 829 176H825Q734 -20 479 -20Q290 -20 187.0 127.5Q84 275 84 540Q84 809 192.5 955.5Q301 1102 500 1102Q615 1102 698.5 1054.0Q782 1006 827 911H829L827 1089V1484H1108V236Q1108 136 1116 0ZM831 547Q831 722 772.5 816.5Q714 911 600 911Q487 911 432.0 819.5Q377 728 377 540Q377 172 598 172Q709 172 770.0 269.5Q831 367 831 547Z"/>';
+function mark(h){return '<svg viewBox="96 40 128 140" style="height:'+h+'px;width:auto" role="img" aria-label="SAVD bookmark"><path style="fill:var(--tomato)" fill-rule="evenodd" d="'+MARK+'"/></svg>'}
+function word(h){return '<svg class="wm" viewBox="72 206 170 50" style="height:'+h+'px;width:auto" role="img" aria-label="savd">'+WORD+'</svg>'}
 
-  $('codeForm').onsubmit=function(e){e.preventDefault();
-    var ok=/^OFFICE-?4821$/i.test($('code').value.replace(/\s/g,''));
-    $('codeErr').textContent=ok?'':'We can’t find that group. Check the code or ask whoever invited you.';
-    $('invite').style.opacity=ok?1:.35;$('joinBtn').disabled=!ok};
-  $('joinBtn').onclick=function(){S.joined=true;setRole(S.role);show('feed');toast('You joined Office Lunch.')};
-  $('createBtn').onclick=function(){toast('Create group comes in step 2 of the build.')};
-  $('orderBtn').onclick=function(){toast(S.role==='host'?'Next build step: confirm branch, address and cutoff.':'Only the host starts the order. You will see Join lunch order here.')};
-  $('findBtn').onclick=function(){toast('Find the restaurant comes in step 2 of the build.')};
-  $('pasteForm').onsubmit=function(e){e.preventDefault();
-    var v=$('reelUrl').value.trim();
-    var src=/instagram\.com\/reel/i.test(v)?'Instagram Reel':/tiktok\.com/i.test(v)?'TikTok':/youtube\.com\/shorts|youtu\.be/i.test(v)?'YouTube Shorts':null;
-    toast(src?src+' link accepted. Matching comes in step 2 of the build.':'Paste an Instagram Reel, TikTok or YouTube Shorts link.')};
+/* ---------- data (mock) ---------- */
+var FEE_D=9, FEE_S=6;
+var R={
+ smash:{name:'Smash Yard',cuisine:'Burgers',branch:'Business Bay',dist:1.2,eta:[15,25],delivers:true,art:'burger',menu:[
+  {id:'s1',n:'Classic smash burger',p:22,main:1,veg:0},{id:'s2',n:'Crispy chicken burger',p:30,main:1,veg:0},{id:'s3',n:'Double smash burger',p:34,main:1,veg:0},{id:'s4',n:'Fries',p:12,main:0,veg:1}]},
+ zaatar:{name:'Zaatar & Co.',cuisine:'Lebanese',branch:'Downtown',dist:2.4,eta:[25,35],delivers:true,art:'wrap',menu:[
+  {id:'z1',n:'Chicken shawarma plate',p:32,main:1,veg:0},{id:'z2',n:'Beef shawarma wrap',p:28,main:1,veg:0},{id:'z3',n:'Falafel wrap',p:24,main:1,veg:1},{id:'z4',n:'Halloumi salad bowl',p:30,main:1,veg:1},{id:'z5',n:'Hummus and bread',p:18,main:0,veg:1}]},
+ kerala:{name:'Kerala Kitchen',cuisine:'Indian',branch:'Downtown',dist:1.9,eta:[30,40],delivers:true,art:'curry',menu:[
+  {id:'k1',n:'Veg thali',p:28,main:1,veg:1},{id:'k2',n:'Paneer biryani',p:31,main:1,veg:1},{id:'k3',n:'Chicken curry meal',p:33,main:1,veg:0},{id:'k4',n:'Papad',p:8,main:0,veg:1}]},
+ babas:{name:'Baba’s Pizza',cuisine:'Pizza',branch:'Downtown',dist:3.1,eta:[35,45],delivers:true,art:'pizza',menu:[
+  {id:'b1',n:'Margherita',p:34,main:1,veg:1},{id:'b2',n:'Chicken ranch pizza',p:35,main:1,veg:0},{id:'b3',n:'Garlic knots',p:16,main:0,veg:1}]},
+ wok:{name:'Wok Express',cuisine:'Asian',branch:'Karama',dist:6.8,eta:[40,55],delivers:false,art:'bowl',menu:[
+  {id:'w1',n:'Veg noodles',p:29,main:1,veg:1},{id:'w2',n:'Chicken fried rice',p:31,main:1,veg:0}]}
+};
+var M={maya:{name:'Maya',role:'Host',color:'#E8A39A',diet:'No restrictions',veg:false},
+       omar:{name:'Omar',role:'Invited',color:'#F2C777',diet:'No restrictions',veg:false},
+       layla:{name:'Layla',role:'Invited',color:'#B9A5D6',diet:'Vegetarian',veg:true}};
+var IDS=['maya','omar','layla'];
+var W={saved:1,want:2,order:3}, SIGL={saved:'Saved',want:'Want to try',order:'I’d order this'};
 
-  setRole('host');show('splash');
+var S;
+function fresh(){
+ return {viewer:'maya',screen:'splash',onboard:{maya:false,omar:true,layla:true},joined:{maya:true,omar:false,layla:false},
+  saves:{maya:[],
+    omar:[{id:'o1',rid:'zaatar',dish:'Chicken shawarma plate',src:'TikTok',signal:'want',shared:false,when:'last week'},{id:'o2',rid:'babas',dish:'Chicken ranch pizza',src:'Instagram Reel',signal:'saved',shared:false,when:'2 weeks ago'}],
+    layla:[{id:'l1',rid:'zaatar',dish:'Falafel wrap',src:'Instagram Reel',signal:'want',shared:false,when:'last week'},{id:'l2',rid:'kerala',dish:'Paneer biryani',src:'YouTube Shorts',signal:'saved',when:'3 weeks ago',shared:false}]},
+  history:{layla:{kerala:1}},
+  taste:{maya:['Burgers'],omar:['Lebanese','Grill'],layla:['Lebanese','Indian','Vegetarian']},
+  draft:{url:'',loaded:false,signal:'want'},
+  inc:{maya:true,omar:true,layla:true},budget:35,compare:false,pick:null,
+  cart:{maya:{items:[],ready:false},omar:{items:[],ready:false},layla:{items:[],ready:false}},placed:false,status:0};
+}
+var toastT;
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true},2800)}
+function go(s){S.screen=s;render()}
+function money(n){return 'AED '+n.toFixed(2).replace(/\.00$/,'')}
+function m2(n){return 'AED '+n.toFixed(2)}
+function incl(){return IDS.filter(function(i){return S.inc[i]})}
+function av(id,sz){return '<span class="av" style="background:'+M[id].color+(sz?';width:'+sz+'px;height:'+sz+'px':'')+'">'+M[id].name[0]+'</span>'}
+
+/* ---------- dish illustrations ---------- */
+function art(kind,label){
+ var bg={burger:'#F2C777',wrap:'#E9B98A',curry:'#EBA85B',pizza:'#F0C987',bowl:'#CFE0A5'}[kind]||'#F2C777', s='';
+ if(kind==='burger') s='<ellipse cx="120" cy="132" rx="70" ry="8" fill="rgba(33,20,46,.15)"/><rect x="62" y="108" width="116" height="20" rx="10" fill="#D98B3A"/><rect x="58" y="92" width="124" height="17" rx="8" fill="#4A2A22"/><path d="M62 88l116 0-12 14-20-8-20 8-20-8-20 8-20-8z" fill="#F2B83B"/><path d="M58 84q14-12 28 0t28 0 28 0 28 0 14-4v8H58z" fill="#7FB241"/><rect x="74" y="74" width="92" height="9" rx="4" fill="#C6422D"/><path d="M60 74Q60 30 120 30T180 74z" fill="#E5A04B"/><ellipse cx="96" cy="52" rx="5" ry="2.6" fill="#FBF4E6"/><ellipse cx="124" cy="45" rx="5" ry="2.6" fill="#FBF4E6"/><ellipse cx="150" cy="56" rx="5" ry="2.6" fill="#FBF4E6"/>';
+ if(kind==='wrap') s='<ellipse cx="120" cy="136" rx="76" ry="8" fill="rgba(33,20,46,.15)"/><g transform="rotate(-18 120 90)"><rect x="52" y="56" width="136" height="64" rx="32" fill="#F4DDB0"/><rect x="104" y="60" width="78" height="60" rx="8" fill="#FFFDF8" opacity=".9"/><circle cx="62" cy="76" r="9" fill="#7FB241"/><circle cx="74" cy="66" r="8" fill="#C6422D"/><circle cx="64" cy="92" r="8" fill="#F4DDB0"/><circle cx="82" cy="80" r="6" fill="#7FB241"/></g>';
+ if(kind==='curry') s='<ellipse cx="120" cy="136" rx="70" ry="7" fill="rgba(33,20,46,.15)"/><path d="M40 78h160a80 62 0 0 1-160 0z" fill="#FFFDF8"/><path d="M52 80h136a68 50 0 0 1-136 0z" fill="#C25E1C"/><circle cx="100" cy="94" r="10" fill="#F4DDB0"/><circle cx="130" cy="90" r="9" fill="#F4DDB0"/><circle cx="150" cy="102" r="8" fill="#F4DDB0"/><circle cx="112" cy="106" r="5" fill="#7FB241"/><path d="M70 62q8-18 0-30M100 56q8-18 0-30M130 62q8-18 0-30" stroke="#FFFDF8" stroke-width="5" fill="none" opacity=".7" stroke-linecap="round"/>';
+ if(kind==='pizza') s='<ellipse cx="120" cy="138" rx="70" ry="7" fill="rgba(33,20,46,.15)"/><circle cx="120" cy="82" r="62" fill="#D79A4B"/><circle cx="120" cy="82" r="54" fill="#C6422D"/><circle cx="120" cy="82" r="48" fill="#F5D586"/><circle cx="98" cy="66" r="9" fill="#A5301F"/><circle cx="138" cy="72" r="9" fill="#A5301F"/><circle cx="112" cy="100" r="9" fill="#A5301F"/><circle cx="146" cy="100" r="8" fill="#A5301F"/>';
+ if(kind==='bowl') s='<ellipse cx="120" cy="136" rx="70" ry="7" fill="rgba(33,20,46,.15)"/><path d="M48 80h144a72 56 0 0 1-144 0z" fill="#FFFDF8"/><path d="M58 82q62-18 124 0" fill="none" stroke="#E9B98A" stroke-width="8"/><path d="M70 74q20-14 40 0t40 0" fill="none" stroke="#E9B98A" stroke-width="7"/>';
+ return '<div class="art" style="background:'+bg+'"><svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+s+'</svg>'+(label?'<small>Illustration</small>':'')+'</div>';
+}
+
+/* ---------- recommendation engine ---------- */
+function mealsFor(r,mid){return r.menu.filter(function(i){return i.main&&i.p<=S.budget&&(!M[mid].veg||i.veg)})}
+function signalScore(mid,rid){var t=0;S.saves[mid].forEach(function(s){if(s.rid===rid)t+=W[s.signal]});var h=(S.history[mid]||{})[rid]||0;t+=h>=2?4:h===1?3:0;return t}
+function saversCount(rid){return incl().filter(function(m){return S.saves[m].some(function(s){return s.rid===rid})}).length}
+function evaluate(rid){
+ var r=R[rid],list=incl(),fail=null,score=0;
+ if(!r.delivers) fail={why:'Doesn’t deliver to Emaar Square'};
+ else list.some(function(m){if(!mealsFor(r,m).length){fail={who:m,why:M[m].name+' has no '+(M[m].veg?'vegetarian ':'')+'main under AED '+S.budget};return true}});
+ list.forEach(function(m){score+=signalScore(m,rid);if(S.taste[m].indexOf(r.cuisine)>-1)score+=.5});
+ score-=r.eta[1]/100;
+ return {rid:rid,ok:!fail,fail:fail,score:score};
+}
+function rank(){
+ var all=Object.keys(R).map(evaluate);
+ return {good:all.filter(function(x){return x.ok}).sort(function(a,b){return b.score-a.score}),out:all.filter(function(x){return !x.ok}),
+  base:Object.keys(R).filter(function(k){return R[k].delivers}).sort(function(a,b){var pa=Math.min.apply(null,R[a].menu.filter(function(i){return i.main}).map(function(i){return i.p})),pb=Math.min.apply(null,R[b].menu.filter(function(i){return i.main}).map(function(i){return i.p}));return pa-pb||R[a].dist-R[b].dist})};
+}
+var NUM=['Nobody','One person','Two people','Three people'];
+function why(x){
+ var r=R[x.rid],n=saversCount(x.rid),vegs=incl().filter(function(m){return M[m].veg});
+ var t=(n?NUM[n]+(n===1?' saved':' saved')+' this spot. ':'Nobody saved this spot, but it fits your tastes. ')+'Everyone has a meal under AED '+S.budget+'. ';
+ if(vegs.length)t+='It has vegetarian mains for '+vegs.map(function(m){return M[m].name}).join(' and ')+'. ';
+ return t+'Estimated delivery in '+r.eta[0]+' to '+r.eta[1]+' min.';
+}
+function checks(rid,okGroup,okDeliver){var r=R[rid];var d=okDeliver===undefined?r.delivers:okDeliver;
+ return '<div class="chips"><span class="chip ok">✓ Restaurant found</span><span class="chip '+(d?'ok':'no')+'">'+(d?'✓ Delivers here':'✗ Doesn’t deliver here')+'</span><span class="chip '+(okGroup?'ok':'no')+'">'+(okGroup?'✓ Works for this group':'✗ Doesn’t work for this group')+'</span></div>'}
+
+/* ---------- cart maths ---------- */
+function feeEach(){var n=incl().length||1;return Math.round((FEE_D+FEE_S)/n*100)/100}
+function itemsTotal(m){var r=R[S.pick];return S.cart[m].items.reduce(function(t,id){var it=r.menu.filter(function(i){return i.id===id})[0];return t+(it?it.p:0)},0)}
+function share(m){return itemsTotal(m)+feeEach()}
+function hasMain(m){var r=R[S.pick];return S.cart[m].items.some(function(id){return r.menu.filter(function(i){return i.id===id&&i.main}).length})}
+function orderTotal(){return incl().reduce(function(t,m){return t+share(m)},0)}
+
+/* ---------- screens ---------- */
+function tabs(cur){return '<nav class="tabs"><button data-go="saves" '+(cur==='saves'?'aria-current="page"':'')+'>My saves</button><button data-go="group" '+(cur==='group'?'aria-current="page"':'')+'>Office Lunch</button></nav>'}
+function vSplash(){return '<section class="scr splash" data-splash><div class="lock">'+mark(104)+word(48)+'</div><div class="brandline">Save what looks good.<br>Order what works for everyone.</div><p>Ordering together is as easy as eating together.</p></section>'}
+function vFirst(){
+ var d=S.draft;
+ var body=d.loaded?
+  '<div class="card hero">'+'<div style="position:relative"><span class="src">Instagram Reel</span>'+art('burger',true)+'</div><div class="body"><h3>Classic smash burger</h3><div class="sub">Smash Yard · Business Bay branch</div>'+checks('smash',true)+'<button class="link" data-act="wrong" style="text-align:left;padding:0">Not the right place? Search the restaurant</button>'+
+  '<div class="k" style="margin-top:4px">How interested are you?</div><div class="sig">'+['saved','want','order'].map(function(s){return '<button data-act="dsig" data-v="'+s+'" aria-pressed="'+(d.signal===s)+'">'+SIGL[s]+'</button>'}).join('')+'</div></div></div>'+
+  '<div class="note lock">🔒 Saved privately. Sharing with Office Lunch is a separate step.</div>'
+ :'<div class="field"><input id="url" placeholder="Paste an Instagram, TikTok or Shorts link" value="'+d.url+'" aria-label="Reel link"><button data-act="paste">Add</button></div><button class="btn alt" data-act="sample">Use a sample reel</button><div class="note">SAVD finds the restaurant and dish. You confirm it before anything is saved.</div>';
+ return '<section class="scr"><div class="top">'+word(26)+(S.onboard[S.viewer]?'<button class="back" data-go="saves" aria-label="Back">‹</button>':'')+'</div><h1>Save your first reel</h1><p class="muted" style="margin:0;font-size:16px">Found something that looks good? Keep it here for the day you and your friends can’t decide.</p>'+body+
+  (d.loaded?'<div class="cta"><button class="btn" data-act="savefirst">Save privately</button></div>':'')+'</section>';
+}
+function vJoin(){return '<section class="scr"><div class="top">'+word(26)+'</div><h1>Your team is already here</h1><p class="muted" style="margin:0;font-size:16px">Maya invited you. Join first, then add your saves whenever you like.</p>'+
+  '<div class="card" style="background:var(--plum);color:var(--cream);box-shadow:none"><div class="body"><div class="k" style="color:#F2C777">You’ve been invited to</div><h2 style="font-size:32px">Office Lunch</h2><div class="row" style="color:#E8DDC8;font-size:14px"><span class="chip" style="background:var(--tomato);color:#fff;box-shadow:none;padding:4px 8px">📍</span>Delivering to Emaar Square, Downtown Dubai</div><div class="row"><div class="avs">'+av('maya')+av('omar')+av('layla')+'</div><span style="font-size:13px;color:#E8DDC8">Maya, Omar and Layla</span></div></div></div>'+
+  '<div class="cta"><button class="btn" data-act="join">Join Office Lunch</button><button class="link" data-act="create">Create a new group instead</button></div></section>'}
+function saveCard(s,mid){var r=R[s.rid];
+ return '<div class="card"><div style="position:relative"><span class="src">'+s.src+'</span>'+art(r.art)+'</div><div class="body"><div><h3 style="font-size:19px">'+s.dish+'</h3><div class="sub">'+r.name+' · saved '+s.when+'</div></div>'+
+  '<div class="sig">'+['saved','want','order'].map(function(g){return '<button data-act="sig" data-id="'+s.id+'" data-v="'+g+'" aria-pressed="'+(s.signal===g)+'">'+SIGL[g]+'</button>'}).join('')+'</div>'+
+  '<button class="btn '+(s.shared?'alt':'plum')+'" data-act="share" data-id="'+s.id+'" style="min-height:46px;padding:11px;font-size:15px">'+(s.shared?'Shared with Office Lunch · Undo':'Share with Office Lunch')+'</button></div></div>'}
+function vSaves(){var v=S.viewer,list=S.saves[v];
+ var tags=S.taste[v].map(function(t){return '<button class="chip" data-act="rmtaste" data-v="'+t+'" aria-label="Remove '+t+' from my taste">'+t+' ✕</button>'}).join('');
+ return '<section class="scr"><div class="top">'+word(26)+av(v,38)+'</div><div><h1>'+M[v].name+'’s saves</h1><div class="lock sub">🔒 Private. Others only see what you share.</div></div>'+
+  '<button class="btn alt" data-act="addreel" style="min-height:50px;padding:12px">＋ Add a reel</button>'+
+  '<div><div class="k">What SAVD thinks you like</div><div class="chips" style="margin-top:6px">'+(tags||'<span class="sub">Nothing yet</span>')+'</div><div class="sub" style="margin-top:6px">Tap a tag if SAVD got it wrong.</div></div>'+
+  (list.length?list.map(function(s){return saveCard(s,v)}).join(''):'<div class="note">No saves yet. Add a reel and SAVD will find the restaurant.</div>')+'</section>'+tabs('saves')}
+function vGroup(){
+ var shared=[];IDS.forEach(function(m){S.saves[m].forEach(function(s){if(s.shared)shared.push({s:s,m:m})})});
+ var cards=shared.map(function(o){var r=R[o.s.rid],ev=evaluate(o.s.rid);
+  return '<div class="card hero"><div style="position:relative"><span class="src">'+o.s.src+'</span>'+art(r.art,true)+'</div><div class="body"><h3>'+o.s.dish+'</h3><div class="row sub">'+av(o.m,22)+'Shared by '+M[o.m].name+' · '+r.name+'</div>'+checks(o.s.rid,ev.ok)+
+   (ev.ok?'<button class="btn" data-act="orderreel" data-rid="'+o.s.rid+'">Order from this reel</button>':'<div class="note">'+ev.fail.why+'. Find our lunch can suggest a spot everyone can order from.</div>')+'</div></div>'}).join('');
+ return '<section class="scr"><div class="top"><div><h2 style="font-size:26px">Office Lunch</h2><div class="sub">Emaar Square, Downtown · 3 members</div></div><div class="avs">'+IDS.map(function(m){return av(m)}).join('')+'</div></div>'+
+  '<button class="btn" data-go="find" style="min-height:66px;font-size:19px;font-family:var(--display)">Find our lunch</button>'+
+  '<div class="sub" style="margin-top:-6px">Uses everyone’s tastes and saves marked Want to try, plus today’s address, budget and diets.</div>'+
+  '<div class="k" style="margin-top:6px">Shared with the group</div>'+(cards||'<div class="note">No reels shared yet. Saves stay private until a member shares them. Find our lunch still counts saves marked Want to try, without naming anyone.</div>')+'</section>'+tabs('group')}
+function vFind(){
+ var rk=rank(),top=rk.good[0],alts=rk.good.slice(1,3);
+ var who=IDS.map(function(m){return '<button data-act="inc" data-id="'+m+'" aria-pressed="'+S.inc[m]+'">'+av(m,32)+'<span>'+M[m].name+'<small>'+M[m].diet+'</small></span></button>'}).join('');
+ var head='<div class="top"><button class="back" data-go="group" aria-label="Back">‹</button><h2 style="font-size:22px">Find our lunch</h2><span style="width:40px"></span></div>'+
+  '<div class="k">Who’s ordering today</div><div class="who">'+who+'</div>'+
+  '<div class="row"><div class="grow"><div class="k">Budget per person</div><div class="step" style="margin-top:6px"><button data-act="bud" data-v="-5" aria-label="Lower budget">−</button><b>AED '+S.budget+'</b><button data-act="bud" data-v="5" aria-label="Raise budget">+</button></div></div><div class="grow"><div class="k">Delivering to</div><div style="font-weight:600;margin-top:10px;font-size:14px">Emaar Square, Downtown</div></div></div>'+
+  '<div class="seg2" role="group" aria-label="Ranking"><button data-act="cmp" data-v="0" aria-pressed="'+!S.compare+'">Saves + group fit</button><button data-act="cmp" data-v="1" aria-pressed="'+S.compare+'">Price + distance</button></div>';
+ var body='';
+ if(S.compare){
+  body='<div class="note">Baseline shortlist: cheapest first, then nearest. It ignores diets and saves.</div>'+rk.base.slice(0,3).map(function(rid,i){var r=R[rid],ev=evaluate(rid);return '<div class="alt">'+art(r.art)+'<div class="grow"><b>'+(i+1)+'. '+r.name+'</b><div class="sub">from AED '+Math.min.apply(null,r.menu.filter(function(x){return x.main}).map(function(x){return x.p}))+' · '+r.dist+' km · '+r.eta[0]+' to '+r.eta[1]+' min</div></div>'+(ev.ok?'':'<span class="chip no">Leaves someone out</span>')+'</div>'}).join('')+'<div class="note">Test idea: time how long a group takes to agree from this list versus the recommendation, and count who is left without a meal.</div>';
+ }else if(!top){
+  body='<div class="note">No restaurant works for everyone at AED '+S.budget+'. Raise the budget or change who’s ordering.</div>';
+ }else{
+  var r=R[top.rid];
+  body='<div class="card hero"><div style="position:relative"><span class="src">Best pick for today</span>'+art(r.art,true)+'</div><div class="body"><h3>'+r.name+'</h3><div class="sub">'+r.cuisine+' · '+r.branch+' branch · '+r.eta[0]+' to '+r.eta[1]+' min</div>'+checks(top.rid,true)+'<p class="why">'+why(top)+'</p><button class="btn" data-act="cart" data-rid="'+top.rid+'">Open group cart</button></div></div>'+
+   (alts.length?'<div class="k">Also works for everyone</div>'+alts.map(function(a){var q=R[a.rid];return '<div class="alt">'+art(q.art)+'<div class="grow"><b>'+q.name+'</b><div class="sub">'+q.eta[0]+' to '+q.eta[1]+' min · '+(saversCount(a.rid)?NUM[saversCount(a.rid)].toLowerCase()+' saved it':'fits your tastes')+'</div></div><button class="chip" data-act="cart" data-rid="'+a.rid+'">Choose</button></div>'}).join(''):'');
+  if(rk.out.length)body+='<div class="k">Left out, and why</div><div class="left">'+rk.out.map(function(o){var q=R[o.rid],sh=[];IDS.forEach(function(m){if(S.saves[m].some(function(s){return s.rid===o.rid&&s.shared}))sh.push(M[m].name)});return '<div><b>'+q.name+'</b>'+(sh.length?' (shared by '+sh.join(', ')+')':'')+': '+o.fail.why+'.</div>'}).join('')+'</div>';
+  body+='<div class="note lock">🔒 Individual saves stay private. Names only appear for reels a member shared.</div>';
+ }
+ return '<section class="scr">'+head+body+'</section>';
+}
+function vCart(){
+ var r=R[S.pick],v=S.viewer,isHost=v==='maya',inc=incl();
+ var all=inc.every(function(m){return S.cart[m].ready});
+ var rows=inc.map(function(m){var c=S.cart[m];var names=c.items.map(function(id){return r.menu.filter(function(i){return i.id===id})[0].n}).join(' + ');
+  return '<div class="mrow '+(m===v?'me':'')+'">'+av(m,38)+'<div class="grow"><b>'+M[m].name+(m===v?' (you)':'')+'</b><div class="sub">'+(names||'Hasn’t picked yet')+'</div></div><span class="st '+(c.ready?'ready':'')+'">'+(c.ready?'Ready':'Choosing')+'</span></div>'}).join('');
+ var mine=S.cart[v];
+ var menu=!S.inc[v]?'<div class="note">You’re not in today’s order.</div>':r.menu.map(function(it){var bad=M[v].veg&&!it.veg;
+  return '<button class="item" data-act="item" data-id="'+it.id+'" aria-pressed="'+(mine.items.indexOf(it.id)>-1)+'" '+(bad||mine.ready?'disabled':'')+'><div><b>'+it.n+'</b><span>'+(bad?'Not vegetarian':it.main?(it.p>S.budget?'Over budget':'Main'):'Side')+(S.pick==='zaatar'&&it.id==='z1'?' · featured in the reel':'')+'</span></div><span class="p">AED '+it.p+'</span></button>'}).join('');
+ var f=feeEach(),it=itemsTotal(v);
+ var mineBlock=!S.inc[v]?'':'<div class="k">Your meal</div>'+menu+'<div class="sum"><div><span>Your items</span><span>'+m2(it)+'</span></div><div><span>Delivery share (÷'+inc.length+')</span><span>'+m2(FEE_D/inc.length)+'</span></div><div><span>Service share (÷'+inc.length+')</span><span>'+m2(FEE_S/inc.length)+'</span></div><div class="tot"><span>Your share</span><span>'+m2(it+f)+'</span></div></div>';
+ var cta;
+ if(mine.ready&&!isHost) cta='<button class="btn alt" data-act="edit">Edit my basket</button>';
+ else if(!mine.ready&&S.inc[v]) cta='<button class="btn" data-act="confirm" '+(hasMain(v)?'':'disabled')+'>Confirm my share · '+m2(it+f)+'</button><div class="sub" style="text-align:center">Simulated payment. No real money moves.</div>';
+ else cta='';
+ if(isHost&&mine.ready){
+  var waiting=inc.filter(function(m){return !S.cart[m].ready}).map(function(m){return M[m].name});
+  cta='<button class="btn" data-act="place" '+(all?'':'disabled')+'>'+(all?'Place one order · '+m2(orderTotal()):'Waiting for '+waiting.join(' and '))+'</button><button class="link" data-act="edit">Edit my basket</button><div class="sub" style="text-align:center">You never cover anyone else’s share.</div>';
+ }
+ return '<section class="scr"><div class="top"><button class="back" data-go="find" aria-label="Back">‹</button><h2 style="font-size:22px">Group cart</h2><span style="width:40px"></span></div>'+
+  '<div class="card"><div class="body"><div class="row"><div class="grow"><h3 style="font-size:20px">'+r.name+'</h3><div class="sub">'+r.branch+' branch · Emaar Square · order closes 12:30</div></div></div>'+checks(S.pick,true)+'</div></div>'+
+  '<div class="k">Everyone’s progress</div>'+rows+mineBlock+'<div class="cta">'+cta+'</div></section>';
+}
+var STAT=['Order placed','Restaurant is preparing','Out for delivery','Delivered'];
+function vDone(){
+ var r=R[S.pick],inc=incl();
+ var lines=inc.map(function(m){var c=S.cart[m];return '<div class="mrow '+(m===S.viewer?'me':'')+'">'+av(m,36)+'<div class="grow"><b>'+M[m].name+(m===S.viewer?' (you)':'')+'</b><div class="sub">'+c.items.map(function(id){return r.menu.filter(function(i){return i.id===id})[0].n}).join(' + ')+'</div></div><b style="font-variant-numeric:tabular-nums">'+m2(share(m))+'</b></div>'}).join('');
+ var tl=STAT.map(function(s,i){return '<li class="'+(i<S.status?'done':i===S.status?'now':'future')+'"><i></i>'+(i===3&&S.status===3?'Delivered · confirmed':s)+'</li>'}).join('');
+ return '<section class="scr"><div class="top">'+word(26)+av(S.viewer,38)+'</div><div><div class="k">Same confirmation for everyone</div><h1>'+(S.status===3?'Lunch has arrived':'Lunch is on its way')+'</h1><div class="sub">'+r.name+' · Emaar Square · '+r.eta[0]+' to '+r.eta[1]+' min · Order #SV-2041</div></div>'+
+  '<ul class="tl">'+tl+'</ul><div class="k">Who ordered what</div>'+lines+'<div class="sum"><div class="tot"><span>Order total</span><span>'+m2(orderTotal())+'</span></div></div>'+
+  '<div class="cta">'+(S.status<3?'<button class="btn plum" data-act="adv">Demo: advance delivery status</button>':'')+'<button class="link" data-act="newlunch">Start another lunch</button></div></section>'}
+
+function render(){
+ var a=document.getElementById('app'),h='';
+ var s=S.screen;
+ if(s==='splash')h=vSplash();else if(s==='first')h=vFirst();else if(s==='join')h=vJoin();else if(s==='saves')h=vSaves();else if(s==='group')h=vGroup();else if(s==='find')h=vFind();else if(s==='cart')h=vCart();else h=vDone();
+ a.innerHTML=h;
+ var seg=document.getElementById('seg');seg.innerHTML=IDS.map(function(m){return '<button data-role="'+m+'" aria-pressed="'+(S.viewer===m)+'">'+M[m].name+(m==='maya'?' · Host':'')+'</button>'}).join('');
+ var w=S.viewer==='maya'?'Host. Maya started the group.':(S.joined[S.viewer]?M[S.viewer].name+', invited colleague. Joined Office Lunch.':M[S.viewer].name+', invited colleague. Has an invite link.');
+ document.getElementById('who').textContent=w+' '+M[S.viewer].diet+'.';
+}
+function landing(){ // where each person starts after splash
+ var v=S.viewer;
+ if(!S.onboard[v]) return 'first';
+ if(!S.joined[v]) return 'join';
+ return 'group';
+}
+/* ---------- events ---------- */
+document.addEventListener('click',function(e){
+ var t=e.target.closest('[data-go],[data-act],[data-role],[data-splash]');if(!t)return;
+ if(t.dataset.splash!==undefined){go(landing());return}
+ if(t.dataset.go){go(t.dataset.go);return}
+ if(t.dataset.role){S.viewer=t.dataset.role;var sc=S.screen;if(sc==='splash'||sc==='first'||sc==='join'||sc==='saves'||sc==='group')go(sc==='saves'&&S.onboard[S.viewer]&&S.joined[S.viewer]?'saves':landing());else render();return}
+ var a=t.dataset.act,v=S.viewer;
+ if(a==='sample'){S.draft.loaded=true;render()}
+ else if(a==='paste'){var u=(document.getElementById('url').value||'').trim();S.draft.url=u;if(/instagram\.com\/reel|tiktok\.com|youtube\.com\/shorts|youtu\.be/i.test(u)){S.draft.loaded=true;render()}else toast('Paste an Instagram Reel, TikTok or YouTube Shorts link.')}
+ else if(a==='wrong'){toast('Restaurant search opens here. Confirm the right place before saving.')}
+ else if(a==='dsig'){S.draft.signal=t.dataset.v;render()}
+ else if(a==='savefirst'){S.saves[v].push({id:'n'+Date.now(),rid:'smash',dish:'Classic smash burger',src:'Instagram Reel',signal:S.draft.signal,shared:false,when:'just now'});if(S.taste[v].indexOf('Burgers')<0)S.taste[v].push('Burgers');S.onboard[v]=true;S.draft={url:'',loaded:false,signal:'want'};go('saves');toast('Saved privately. Share it with Office Lunch whenever you like.')}
+ else if(a==='addreel'){S.draft={url:'',loaded:false,signal:'want'};go('first')}
+ else if(a==='sig'){S.saves[v].forEach(function(s){if(s.id===t.dataset.id)s.signal=t.dataset.v});render()}
+ else if(a==='share'){S.saves[v].forEach(function(s){if(s.id===t.dataset.id){s.shared=!s.shared;toast(s.shared?'Shared with Office Lunch. Members can now see it’s yours.':'Unshared. It’s private again.')}});render()}
+ else if(a==='rmtaste'){S.taste[v]=S.taste[v].filter(function(x){return x!==t.dataset.v});toast('Got it. SAVD won’t use '+t.dataset.v+' for you.');render()}
+ else if(a==='join'){S.joined[v]=true;go('group');toast('You joined Office Lunch.')}
+ else if(a==='create'){toast('Creating a new group is the next build step.')}
+ else if(a==='inc'){var id=t.dataset.id;if(S.inc[id]&&incl().length===1){toast('At least one person has to be in.');return}S.inc[id]=!S.inc[id];render()}
+ else if(a==='bud'){S.budget=Math.max(20,Math.min(60,S.budget+Number(t.dataset.v)));render()}
+ else if(a==='cmp'){S.compare=t.dataset.v==='1';render()}
+ else if(a==='orderreel'||a==='cart'){if(S.pick!==t.dataset.rid){S.cart={maya:{items:[],ready:false},omar:{items:[],ready:false},layla:{items:[],ready:false}}}S.pick=t.dataset.rid;go('cart')}
+ else if(a==='item'){var c=S.cart[v],r=R[S.pick],it=r.menu.filter(function(i){return i.id===t.dataset.id})[0];
+   var i=c.items.indexOf(it.id);if(i>-1)c.items.splice(i,1);else{if(it.main)c.items=c.items.filter(function(x){return !r.menu.filter(function(q){return q.id===x&&q.main}).length});c.items.push(it.id)}render()}
+ else if(a==='confirm'){S.cart[v].ready=true;toast('Simulated payment approved for '+m2(share(v))+'.');render()}
+ else if(a==='edit'){S.cart[v].ready=false;render()}
+ else if(a==='place'){S.placed=true;S.status=0;go('done')}
+ else if(a==='adv'){S.status=Math.min(3,S.status+1);render()}
+ else if(a==='newlunch'){S.placed=false;S.pick=null;S.cart={maya:{items:[],ready:false},omar:{items:[],ready:false},layla:{items:[],ready:false}};go('group')}
+});
+document.getElementById('reset').onclick=function(){S=fresh();render();setTimeout(function(){if(S.screen==='splash')go(landing())},1500)};
+document.getElementById('replay').onclick=function(){S.viewer='maya';S.onboard.maya=false;S.saves.maya=[];S.draft={url:'',loaded:false,signal:'want'};go('splash');setTimeout(function(){if(S.screen==='splash')go('first')},1500)};
+document.getElementById('railLogo').innerHTML=word(40);
+
+S=fresh();render();
+setTimeout(function(){if(S.screen==='splash')go(landing())},1800);
 })();
 </script>
