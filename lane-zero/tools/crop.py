@@ -8,8 +8,8 @@ P={ # name: (src, cx, cy, hfrac)
  'p-thompson':('thompson-2024',.55,.24,.75),
  'p-simbine':('simbine-2019',.36,.17,.70),
  'p-seville':('seville-oly',.47,.17,.55),
- 'p-lyles2':('lyles-crop',.37,.17,.70),
- 'p-omanyala':('jacobs-2021',.52,.27,.70),
+ 'p-degrasse':('degrasse-2019',.43,.24,.72),
+ 'p-bolt':('bolt-osaka',.47,.13,.42),
 }
 for k,(s,cx,cy,hf) in P.items():
     im=Image.open(R+s+'.jpg').convert('RGB');W,H=im.size
