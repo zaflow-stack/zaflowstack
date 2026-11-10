@@ -244,6 +244,7 @@ function feeEach(){var n=incl().length||1;return Math.round((FEE_D+FEE_S)/n*100)
 function itemsTotal(m){var r=R[S.pick];return S.cart[m].items.reduce(function(t,id){var it=r.menu.filter(function(i){return i.id===id})[0];return t+(it?it.p:0)},0)}
 function share(m){return itemsTotal(m)+feeEach()}
 function hasMain(m){var r=R[S.pick];return S.cart[m].items.some(function(id){return r.menu.filter(function(i){return i.id===id&&i.main}).length})}
+function featured(it){return IDS.some(function(m){return S.saves[m].some(function(s){return s.shared&&s.rid===S.pick&&s.dish===it.n})})}
 function orderTotal(){return incl().reduce(function(t,m){return t+share(m)},0)}
 
 /* ---------- screens ---------- */
@@ -309,7 +310,7 @@ function vCart(){
   return '<div class="mrow '+(m===v?'me':'')+'">'+av(m,38)+'<div class="grow"><b>'+M[m].name+(m===v?' (you)':'')+'</b><div class="sub">'+(names||'Hasn’t picked yet')+'</div></div><span class="st '+(c.ready?'ready':'')+'">'+(c.ready?'Ready':'Choosing')+'</span></div>'}).join('');
  var mine=S.cart[v];
  var menu=!S.inc[v]?'<div class="note">You’re not in today’s order.</div>':r.menu.map(function(it){var bad=M[v].veg&&!it.veg;
-  return '<button class="item" data-act="item" data-id="'+it.id+'" aria-pressed="'+(mine.items.indexOf(it.id)>-1)+'" '+(bad||mine.ready?'disabled':'')+'><div><b>'+it.n+'</b><span>'+(bad?'Not vegetarian':it.main?(it.p>S.budget?'Over budget':'Main'):'Side')+(S.pick==='zaatar'&&it.id==='z1'?' · featured in the reel':'')+'</span></div><span class="p">AED '+it.p+'</span></button>'}).join('');
+  return '<button class="item" data-act="item" data-id="'+it.id+'" aria-pressed="'+(mine.items.indexOf(it.id)>-1)+'" '+(bad||mine.ready?'disabled':'')+'><div><b>'+it.n+'</b><span>'+(bad?'Not vegetarian':it.main?(it.p>S.budget?'Over budget':'Main'):'Side')+(featured(it)?' · featured in the shared reel':'')+'</span></div><span class="p">AED '+it.p+'</span></button>'}).join('');
  var f=feeEach(),it=itemsTotal(v);
  var mineBlock=!S.inc[v]?'':'<div class="k">Your meal</div>'+menu+'<div class="sum"><div><span>Your items</span><span>'+m2(it)+'</span></div><div><span>Delivery share (÷'+inc.length+')</span><span>'+m2(FEE_D/inc.length)+'</span></div><div><span>Service share (÷'+inc.length+')</span><span>'+m2(FEE_S/inc.length)+'</span></div><div class="tot"><span>Your share</span><span>'+m2(it+f)+'</span></div></div>';
  var cta;
