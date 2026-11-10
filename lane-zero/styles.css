@@ -306,6 +306,9 @@ ol,ul{list-style:none}
   .dist{grid-template-columns:repeat(5,1fr)}
   .dist button{padding:10px 8px}
   .dist small{display:none}
+  .dist b{font-size:30px}
+  .face__info b{font-size:20px}
+  .pb em{font-size:24px}
   .desk__img,.desk__copy{grid-column:1/-1}
   .desk__list a{grid-template-columns:1fr 24px}
   .desk__list span{display:none}
