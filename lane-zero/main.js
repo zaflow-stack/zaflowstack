@@ -1,4 +1,4 @@
-/* LANE ZERO — interactions */
+/* LANE ZERO: interactions */
 (() => {
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
@@ -66,7 +66,7 @@
     100: { img: 'desk-100.jpg', wr: 'WR 9.58 · Berlin 2009', title: 'Building the first 30 metres of a 100m race', lede: 'Block clearance, shin angle and the slow rise of the torso.',
            list: [['The Lab', 'How to read a reaction time'], ['Races', 'Why sprinters lean at the line'], ['Athletes', 'Ten seconds, ten years: a 100m career in splits']] },
     200: { img: 'desk-200.jpg', wr: 'WR 19.19 · Berlin 2009', title: 'The bend: running a curve at ten metres a second', lede: 'Lean in, stay tight to the line, and come off the turn with speed to spare.',
-           list: [['The Lab', 'Inside lane or outside lane — which is faster?'], ['Races', 'Tebogo’s 19.46 and the art of the second hundred'], ['Athletes', 'Why the best 200m runners never look like they are trying']] },
+           list: [['The Lab', 'Inside lane or outside lane: which is faster?'], ['Races', 'Tebogo’s 19.46 and the art of the second hundred'], ['Athletes', 'Why the best 200m runners never look like they are trying']] },
     400: { img: 'desk-400.jpg', wr: 'WR 43.03 · Rio 2016', title: 'One lap, three races: dividing the 400m', lede: 'Attack, float, survive. How the fastest one-lap runners spend their energy.',
            list: [['The Lab', 'Where the 400m is actually lost'], ['Races', 'Running 43 seconds from lane eight'], ['Athletes', 'From the 100m to the one-lap race']] },
     hr:  { img: 'desk-hr.jpg', wr: '4×100 WR 36.84 · London 2012', title: 'Twenty metres to pass a baton', lede: 'The exchange zone is where relays are won, and where they fall apart.',
@@ -92,9 +92,9 @@
   // [head, neck, hip, frontKnee, frontAnkle, backKnee, backAnkle, frontElbow, frontHand, backElbow, backHand]
   const POSES = [
     { a: '−15°', d: '0 m',     p: [[264,176],[245,186],[186,168],[212,214],[178,262],[150,224],[110,258],[249,228],[251,268],[241,228],[243,268]] },
-    { a: '45°',  d: '0–10 m',  p: [[232,124],[216,140],[170,186],[224,190],[206,234],[134,226],[96,262],[246,166],[260,140],[186,152],[166,178]] },
-    { a: '85°',  d: '30–80 m', p: [[214,66],[210,86],[200,166],[246,170],[232,216],[190,216],[168,262],[236,116],[242,86],[184,120],[168,146]] },
-    { a: '68°',  d: '95–100 m',p: [[264,90],[246,106],[190,170],[236,216],[252,266],[160,206],[120,226],[214,136],[190,152],[258,146],[242,172]] },
+    { a: '45°',  d: '0-10 m',  p: [[232,124],[216,140],[170,186],[224,190],[206,234],[134,226],[96,262],[246,166],[260,140],[186,152],[166,178]] },
+    { a: '85°',  d: '30-80 m', p: [[214,66],[210,86],[200,166],[246,170],[232,216],[190,216],[168,262],[236,116],[242,86],[184,120],[168,146]] },
+    { a: '68°',  d: '95-100 m',p: [[264,90],[246,106],[190,170],[236,216],[252,266],[160,206],[120,226],[214,136],[190,152],[258,146],[242,172]] },
   ];
   const fig = $('#figure');
   const pts = (...xs) => xs.map(p => p.join(',')).join(' ');
@@ -124,7 +124,7 @@
   const min = Math.min(...SPL);
   sb.innerHTML = SPL.map((s, i) => {
     const speed = 10 / s, h = Math.round((speed / (10 / min)) * 100);
-    return `<div class="bar${s === min ? ' is-peak' : ''}" data-h="${h}" title="${(speed * 3.6).toFixed(1)} km/h"><span class="bar__val">${s.toFixed(2)}</span><div class="bar__fill"></div><span class="bar__lbl">${i * 10}–${i * 10 + 10}</span></div>`;
+    return `<div class="bar${s === min ? ' is-peak' : ''}" data-h="${h}" title="${(speed * 3.6).toFixed(1)} km/h"><span class="bar__val">${s.toFixed(2)}</span><div class="bar__fill"></div><span class="bar__lbl">${i * 10}-${i * 10 + 10}</span></div>`;
   }).join('');
   const fillBars = () => $$('.bar', sb).forEach((b, i) => setTimeout(() => { b.querySelector('.bar__fill').style.height = `calc(${b.dataset.h}% - 50px)`; }, i * 80));
 
@@ -135,7 +135,7 @@
     const v = $('#email').value.trim();
     const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
     msg.className = 'split__msg mono ' + (ok ? 'ok' : 'err');
-    msg.textContent = ok ? 'You’re in. First split lands Monday 07:00.' : 'False start — check that email address.';
+    msg.textContent = ok ? 'You’re in. First split lands Monday 07:00.' : 'False start. Check that email address.';
     if (ok) form.reset();
   });
 
