@@ -126,6 +126,7 @@ h1{font-size:30px;line-height:1.1}
 .pill{box-shadow:inset 0 0 0 1px var(--line);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;background:var(--cream)}
 .rail ol{margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:4px}
 .rail li.done{color:var(--plum);font-weight:600}
+.alert{background:#FFF1DC;color:#6B3A00;border-radius:16px;padding:14px 16px;font-size:14px;display:flex;flex-direction:column;gap:8px;flex:none}.alert b{font-size:15px;color:#4A2800}.alert .row{flex-wrap:wrap}.st.bad{background:#F6D9D2;color:#8A2A1A;box-shadow:none}.st.warn{background:#FFE7B8;box-shadow:none}
 </style>
 
 <div class="stage">
@@ -141,13 +142,19 @@ h1{font-size:30px;line-height:1.1}
       <div class="k" style="margin-top:4px">Viewing as</div><div id="who" style="font-weight:600"></div>
     </div>
     <div class="panel">
+      <div class="k">Simulate a problem</div>
+      <div class="row" style="flex-wrap:wrap"><button class="pill" id="simSold" aria-pressed="false">Featured dish sold out</button><button class="pill" id="simBranch" aria-pressed="false">Branch can’t deliver</button><button class="pill" id="simPay" aria-pressed="false">Next payment fails</button><button class="pill" id="simCut">Cutoff passes now</button></div>
+      <div class="muted" style="font-size:12px">Use before starting the order (sold out, branch) or during the cart (payment, cutoff).</div>
+    </div>
+    <div class="panel">
       <div class="k">60-second path</div>
       <ol>
         <li>Maya (host): save the sample reel, open Group, tap Find our lunch</li>
-        <li>See why Zaatar &amp; Co. beats the burger spot, open the group cart</li>
-        <li>Switch to Omar, then Layla: pick a meal, confirm share</li>
+        <li>See why Zaatar &amp; Co. beats the burger spot, tap Start this lunch, confirm branch, address and cutoff</li>
+        <li>Switch to Omar, then Layla: tap Join lunch order, pick a meal, confirm share</li>
         <li>Back to Maya: place one order, everyone sees the same status</li>
         <li>On Find our lunch, tap “Price + distance” to compare the baseline</li>
+        <li>Try the hard cases with the Simulate buttons</li>
       </ol>
       <div class="muted" style="font-size:12px">All names, restaurants, prices, saves and payments are mock data. Dish images are drawn illustrations, not photos.</div>
     </div>
@@ -189,9 +196,9 @@ function fresh(){
     layla:[{id:'l1',rid:'zaatar',dish:'Falafel wrap',src:'Instagram Reel',signal:'want',shared:false,when:'last week'},{id:'l2',rid:'kerala',dish:'Paneer biryani',src:'YouTube Shorts',signal:'saved',when:'3 weeks ago',shared:false}]},
   history:{layla:{kerala:1}},
   taste:{maya:['Burgers'],omar:['Lebanese','Grill'],layla:['Lebanese','Indian','Vegetarian']},
-  draft:{url:'',loaded:false,signal:'want'},
+  draft:newDraft(),
   inc:{maya:true,omar:true,layla:true},budget:35,compare:false,pick:null,
-  cart:{maya:{items:[],ready:false},omar:{items:[],ready:false},layla:{items:[],ready:false}},placed:false,status:0};
+  cart:newCart(),placed:false,status:0,group:{name:'Office Lunch',addr:'Emaar Square, Downtown',code:'OFFICE-4821'},order:{stage:'none',rid:null,branch:null,cutoff:750,closed:false,reelDish:null},soldOut:false,branchDown:false,failNext:false,setup:null,setupBranch:null,codeOk:true,codeVal:'OFFICE-4821',created:false};
 }
 var toastT;
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true},2800)}
@@ -248,22 +255,54 @@ function featured(it){return IDS.some(function(m){return S.saves[m].some(functio
 function orderTotal(){return incl().reduce(function(t,m){return t+share(m)},0)}
 
 /* ---------- screens ---------- */
+function hm(min){return Math.floor(min/60)+':'+String(min%60).padStart(2,'0')}
+function newCart(){return {maya:{items:[],ready:false},omar:{items:[],ready:false},layla:{items:[],ready:false}}}
+function newDraft(){return {url:'',loaded:false,signal:'want',mode:'idle',rid:'smash',dish:'Classic smash burger',src:'Instagram Reel',q:''}}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function tabs(cur){return '<nav class="tabs"><button data-go="saves" '+(cur==='saves'?'aria-current="page"':'')+'>My saves</button><button data-go="group" '+(cur==='group'?'aria-current="page"':'')+'>Office Lunch</button></nav>'}
 function vSplash(){return '<section class="scr splash" data-splash><div class="lock">'+mark(104)+word(48)+'</div><div class="brandline">Save what looks good.<br>Order what works for everyone.</div><p>Ordering together is as easy as eating together.</p></section>'}
-function vFirst(){
- var d=S.draft;
- var body=d.loaded?
-  '<div class="card hero">'+'<div style="position:relative"><span class="src">Instagram Reel</span>'+art('burger',true)+'</div><div class="body"><h3>Classic smash burger</h3><div class="sub">Smash Yard · Business Bay branch</div>'+checks('smash',true)+'<button class="link" data-act="wrong" style="text-align:left;padding:0">Not the right place? Search the restaurant</button>'+
-  '<div class="k" style="margin-top:4px">How interested are you?</div><div class="sig">'+['saved','want','order'].map(function(s){return '<button data-act="dsig" data-v="'+s+'" aria-pressed="'+(d.signal===s)+'">'+SIGL[s]+'</button>'}).join('')+'</div></div></div>'+
-  '<div class="note lock">🔒 Saved privately. Sharing with Office Lunch is a separate step.</div>'
- :'<div class="field"><input id="url" placeholder="Paste an Instagram, TikTok or Shorts link" value="'+d.url+'" aria-label="Reel link"><button data-act="paste">Add</button></div><button class="btn alt" data-act="sample">Use a sample reel</button><div class="note">SAVD finds the restaurant and dish. You confirm it before anything is saved.</div>';
- return '<section class="scr"><div class="top">'+word(26)+(S.onboard[S.viewer]?'<button class="back" data-go="saves" aria-label="Back">‹</button>':'')+'</div><h1>Save your first reel</h1><p class="muted" style="margin:0;font-size:16px">Found something that looks good? Keep it here for the day you and your friends can’t decide.</p>'+body+
-  (d.loaded?'<div class="cta"><button class="btn" data-act="savefirst">Save privately</button></div>':'')+'</section>';
+
+function resultsHtml(){
+ var q=(S.draft.q||'').toLowerCase();
+ var ks=Object.keys(R).filter(function(k){return !q||R[k].name.toLowerCase().indexOf(q)>-1||R[k].cuisine.toLowerCase().indexOf(q)>-1});
+ return ks.length?ks.map(function(k){var r=R[k];return '<button class="alt" data-act="pickrest" data-rid="'+k+'" style="width:100%;text-align:left">'+art(r.art).replace('class="art"','class="art"')+'<div class="grow"><b>'+r.name+'</b><div class="sub">'+r.cuisine+' · '+r.branch+' branch</div></div><span class="chip '+(r.delivers?'ok':'no')+'">'+(r.delivers?'Delivers here':'No delivery')+'</span></button>'}).join(''):'<div class="note">No match. Try a different name.</div>';
 }
-function vJoin(){return '<section class="scr"><div class="top">'+word(26)+'</div><h1>Your team is already here</h1><p class="muted" style="margin:0;font-size:16px">Maya invited you. Join first, then add your saves whenever you like.</p>'+
-  '<div class="card" style="background:var(--plum);color:var(--cream);box-shadow:none"><div class="body"><div class="k" style="color:#F2C777">You’ve been invited to</div><h2 style="font-size:32px">Office Lunch</h2><div class="row" style="color:#E8DDC8;font-size:14px"><span class="chip" style="background:var(--tomato);color:#fff;box-shadow:none;padding:4px 8px">📍</span>Delivering to Emaar Square, Downtown Dubai</div><div class="row"><div class="avs">'+av('maya')+av('omar')+av('layla')+'</div><span style="font-size:13px;color:#E8DDC8">Maya, Omar and Layla</span></div></div></div>'+
-  '<div class="cta"><button class="btn" data-act="join">Join Office Lunch</button><button class="link" data-act="create">Create a new group instead</button></div></section>'}
-function saveCard(s,mid){var r=R[s.rid];
+function vFirst(){
+ var d=S.draft,r=R[d.rid],v=S.viewer,body;
+ if(d.mode==='unmatched'){
+  body='<div class="card"><div class="body"><span class="chip no" style="align-self:flex-start">✗ Restaurant not found</span><h3>We couldn’t match this reel</h3><div class="sub">'+d.src+' · no restaurant is tagged in the video. Nothing is saved or shared until you pick the place.</div><button class="btn" data-act="findrest">Find the restaurant</button></div></div>';
+ }else if(d.mode==='search'){
+  body='<div class="field"><input id="q" placeholder="Search a restaurant or cuisine" value="'+esc(d.q)+'" aria-label="Search restaurants"></div><div id="results" style="display:flex;flex-direction:column;gap:10px">'+resultsHtml()+'</div>';
+ }else if(d.mode==='dish'){
+  body='<div class="k">Which dish was in the reel?</div>'+r.menu.filter(function(i){return i.main}).map(function(i){return '<button class="item" data-act="pickdish" data-v="'+esc(i.n)+'"><div><b>'+i.n+'</b><span>'+r.name+'</span></div><span class="p">AED '+i.p+'</span></button>'}).join('');
+ }else if(d.loaded){
+  body='<div class="card hero"><div style="position:relative"><span class="src">'+d.src+'</span>'+art(r.art,true)+'</div><div class="body"><h3>'+d.dish+'</h3><div class="sub">'+r.name+' · '+r.branch+' branch</div>'+
+   '<div class="chips"><span class="chip ok">✓ Restaurant found</span><span class="chip '+(r.delivers?'ok':'no')+'">'+(r.delivers?'✓ Delivers here':'✗ Doesn’t deliver here')+'</span></div>'+
+   '<button class="link" data-act="findrest" style="text-align:left;padding:0">Not the right place? Find the restaurant</button>'+
+   '<div class="k" style="margin-top:4px">How interested are you?</div><div class="sig">'+['saved','want','order'].map(function(s){return '<button data-act="dsig" data-v="'+s+'" aria-pressed="'+(d.signal===s)+'">'+SIGL[s]+'</button>'}).join('')+'</div></div></div>'+
+   '<div class="note lock">🔒 Saved privately. Sharing with Office Lunch is a separate step.</div>';
+ }else{
+  body='<div class="field"><input id="url" placeholder="Paste an Instagram, TikTok or Shorts link" value="'+esc(d.url)+'" aria-label="Reel link"><button data-act="paste">Add</button></div><button class="btn alt" data-act="sample">Use a sample reel</button><button class="btn alt" data-act="sampleX">Try a reel SAVD can’t match</button><div class="note">SAVD finds the restaurant and dish. You confirm it before anything is saved.</div>';
+ }
+ return '<section class="scr"><div class="top">'+word(26)+(S.onboard[v]?'<button class="back" data-go="saves" aria-label="Back">‹</button>':'')+'</div><h1>Save your first reel</h1><p class="muted" style="margin:0;font-size:16px">Found something that looks good? Keep it here for the day you and your friends can’t decide.</p>'+body+
+  (d.loaded&&d.mode!=='search'&&d.mode!=='dish'?'<div class="cta"><button class="btn" data-act="savefirst">Save privately</button></div>':'')+'</section>';
+}
+function vJoin(){
+ var ok=S.codeOk;
+ return '<section class="scr"><div class="top">'+word(26)+'</div><h1>Your team is already here</h1><p class="muted" style="margin:0;font-size:16px">Enter the invite code from your group chat, or open the invite link.</p>'+
+  '<form class="field" id="codeForm" autocomplete="off"><input id="code" aria-label="Invite code" value="'+esc(S.codeVal)+'" maxlength="14" style="font-weight:700;letter-spacing:.12em;text-transform:uppercase"><button type="submit">Check</button></form>'+
+  (ok?'':'<div style="color:var(--tomato);font-size:13px;font-weight:600">We can’t find that group. Check the code or ask whoever invited you.</div>')+
+  '<div class="card" style="background:var(--plum);color:var(--cream);box-shadow:none;opacity:'+(ok?1:.35)+'"><div class="body"><div class="k" style="color:#F2C777">You’ve been invited to</div><h2 style="font-size:32px">Office Lunch</h2><div class="row" style="color:#E8DDC8;font-size:14px">📍 Delivering to Emaar Square, Downtown Dubai</div><div class="row"><div class="avs">'+av('maya')+av('omar')+av('layla')+'</div><span style="font-size:13px;color:#E8DDC8">Maya, Omar and Layla</span></div></div></div>'+
+  '<div class="cta"><button class="btn" data-act="join" '+(ok?'':'disabled')+'>Join Office Lunch</button><button class="btn alt" data-go="create">Create a new group</button></div></section>';
+}
+function vCreate(){
+ if(S.created) return '<section class="scr"><div class="top">'+word(26)+'</div><h1>Group created</h1><div class="note">Share this code or link. Anyone who opens it sees the group name and delivery location before joining.</div>'+
+  '<div class="card"><div class="body"><div class="k">Invite code</div><h2 style="font-size:34px;letter-spacing:.04em">'+esc(S.group.code)+'</h2><div class="sub">savd.app/join/'+esc(S.group.code).toLowerCase()+' (mock link)</div></div></div><div class="cta"><button class="btn" data-act="opengroup">Open the group</button></div></section>';
+ return '<section class="scr"><div class="top"><button class="back" data-go="join" aria-label="Back">‹</button>'+word(26)+'<span style="width:40px"></span></div><h1>Create a group</h1>'+
+  '<div class="field"><input id="gname" placeholder="Group name" value="Team Lunch" aria-label="Group name" style="font-size:17px"></div><div class="field"><input id="gaddr" placeholder="Delivery location" value="Business Bay Tower, Dubai" aria-label="Delivery location" style="font-size:17px"></div><div class="note">Members see the name and location before they join.</div>'+
+  '<div class="cta"><button class="btn" data-act="mkgroup">Create group</button></div></section>';
+}
+function saveCard(s){var r=R[s.rid];
  return '<div class="card"><div style="position:relative"><span class="src">'+s.src+'</span>'+art(r.art)+'</div><div class="body"><div><h3 style="font-size:19px">'+s.dish+'</h3><div class="sub">'+r.name+' · saved '+s.when+'</div></div>'+
   '<div class="sig">'+['saved','want','order'].map(function(g){return '<button data-act="sig" data-id="'+s.id+'" data-v="'+g+'" aria-pressed="'+(s.signal===g)+'">'+SIGL[g]+'</button>'}).join('')+'</div>'+
   '<button class="btn '+(s.shared?'alt':'plum')+'" data-act="share" data-id="'+s.id+'" style="min-height:46px;padding:11px;font-size:15px">'+(s.shared?'Shared with Office Lunch · Undo':'Share with Office Lunch')+'</button></div></div>'}
@@ -272,18 +311,30 @@ function vSaves(){var v=S.viewer,list=S.saves[v];
  return '<section class="scr"><div class="top">'+word(26)+av(v,38)+'</div><div><h1>'+M[v].name+'’s saves</h1><div class="lock sub">🔒 Private. Others only see what you share.</div></div>'+
   '<button class="btn alt" data-act="addreel" style="min-height:50px;padding:12px">＋ Add a reel</button>'+
   '<div><div class="k">What SAVD thinks you like</div><div class="chips" style="margin-top:6px">'+(tags||'<span class="sub">Nothing yet</span>')+'</div><div class="sub" style="margin-top:6px">Tap a tag if SAVD got it wrong.</div></div>'+
-  (list.length?list.map(function(s){return saveCard(s,v)}).join(''):'<div class="note">No saves yet. Add a reel and SAVD will find the restaurant.</div>')+'</section>'+tabs('saves')}
+  (list.length?list.map(saveCard).join(''):'<div class="note">No saves yet. Add a reel and SAVD will find the restaurant.</div>')+'</section>'+tabs('saves')}
+function memberChips(){return incl().map(function(m){var c=S.cart[m];return '<span class="chip '+(c.ready?'ok':'')+'">'+M[m].name+' · '+(c.ready?'Ready':'Choosing')+'</span>'}).join('')}
 function vGroup(){
+ var O=S.order,open=O.stage==='open',placed=O.stage==='placed',host=S.viewer==='maya';
  var shared=[];IDS.forEach(function(m){S.saves[m].forEach(function(s){if(s.shared)shared.push({s:s,m:m})})});
- var cards=shared.map(function(o){var r=R[o.s.rid],ev=evaluate(o.s.rid);
-  return '<div class="card hero"><div style="position:relative"><span class="src">'+o.s.src+'</span>'+art(r.art,true)+'</div><div class="body"><h3>'+o.s.dish+'</h3><div class="row sub">'+av(o.m,22)+'Shared by '+M[o.m].name+' · '+r.name+'</div>'+checks(o.s.rid,ev.ok)+
-   (ev.ok?'<button class="btn" data-act="orderreel" data-rid="'+o.s.rid+'">Order from this reel</button>':'<div class="note">'+ev.fail.why+'. Find our lunch can suggest a spot everyone can order from.</div>')+'</div></div>'}).join('');
+ var orderCard='';
+ if(open||placed){var r=R[O.rid];
+  orderCard='<div class="card hero"><div style="position:relative"><span class="src">'+(open?'Lunch order open':'Order placed')+'</span>'+art(r.art,true)+'</div><div class="body"><h3>'+r.name+' · '+O.branch+'</h3><div class="sub">Emaar Square · '+(O.closed?'closed at ':'order closes ')+hm(O.cutoff)+'</div><div class="chips">'+memberChips()+'</div>'+
+   (open?'<button class="btn" data-act="joinorder">Join lunch order</button>':'<button class="btn" data-go="done">Track the order</button>')+'</div></div>';
+ }
+ var cards=shared.map(function(o){var r=R[o.s.rid],ev=evaluate(o.s.rid),same=(open||placed)&&O.rid===o.s.rid,cta;
+  if(same)cta=open?'<button class="btn" data-act="joinorder">Join lunch order</button>':'';
+  else if(open||placed)cta='<div class="note">One lunch order at a time. This reel can be next.</div>';
+  else if(!ev.ok)cta='<div class="note">'+ev.fail.why+'. Find our lunch can suggest a spot everyone can order from.</div>';
+  else if(host)cta='<button class="btn" data-act="orderreel" data-rid="'+o.s.rid+'" data-dish="'+esc(o.s.dish)+'">Order from this reel</button>';
+  else cta='<div class="note">Maya starts the order. You’ll see Join lunch order here.</div>';
+  return '<div class="card"><div style="position:relative"><span class="src">'+o.s.src+'</span>'+art(r.art,true)+'</div><div class="body"><h3>'+o.s.dish+'</h3><div class="row sub">'+av(o.m,22)+'Shared by '+M[o.m].name+' · '+r.name+'</div>'+checks(o.s.rid,ev.ok)+cta+'</div></div>'}).join('');
  return '<section class="scr"><div class="top"><div><h2 style="font-size:26px">Office Lunch</h2><div class="sub">Emaar Square, Downtown · 3 members</div></div><div class="avs">'+IDS.map(function(m){return av(m)}).join('')+'</div></div>'+
-  '<button class="btn" data-go="find" style="min-height:66px;font-size:19px;font-family:var(--display)">Find our lunch</button>'+
-  '<div class="sub" style="margin-top:-6px">Uses everyone’s tastes and saves marked Want to try, plus today’s address, budget and diets.</div>'+
+  orderCard+
+  (open||placed?'':'<button class="btn" data-go="find" style="min-height:66px;font-size:19px;font-family:var(--display)">Find our lunch</button><div class="sub" style="margin-top:-6px">Uses everyone’s tastes and saves marked Want to try, plus today’s address, budget and diets.</div>')+
   '<div class="k" style="margin-top:6px">Shared with the group</div>'+(cards||'<div class="note">No reels shared yet. Saves stay private until a member shares them. Find our lunch still counts saves marked Want to try, without naming anyone.</div>')+'</section>'+tabs('group')}
+
 function vFind(){
- var rk=rank(),top=rk.good[0],alts=rk.good.slice(1,3);
+ var rk=rank(),top=rk.good[0],alts=rk.good.slice(1,3),host=S.viewer==='maya';
  var who=IDS.map(function(m){return '<button data-act="inc" data-id="'+m+'" aria-pressed="'+S.inc[m]+'">'+av(m,32)+'<span>'+M[m].name+'<small>'+M[m].diet+'</small></span></button>'}).join('');
  var head='<div class="top"><button class="back" data-go="group" aria-label="Back">‹</button><h2 style="font-size:22px">Find our lunch</h2><span style="width:40px"></span></div>'+
   '<div class="k">Who’s ordering today</div><div class="who">'+who+'</div>'+
@@ -293,94 +344,154 @@ function vFind(){
  if(S.compare){
   body='<div class="note">Baseline shortlist: cheapest first, then nearest. It ignores diets and saves.</div>'+rk.base.slice(0,3).map(function(rid,i){var r=R[rid],ev=evaluate(rid);return '<div class="alt">'+art(r.art)+'<div class="grow"><b>'+(i+1)+'. '+r.name+'</b><div class="sub">from AED '+Math.min.apply(null,r.menu.filter(function(x){return x.main}).map(function(x){return x.p}))+' · '+r.dist+' km · '+r.eta[0]+' to '+r.eta[1]+' min</div></div>'+(ev.ok?'':'<span class="chip no">Leaves someone out</span>')+'</div>'}).join('')+'<div class="note">Test idea: time how long a group takes to agree from this list versus the recommendation, and count who is left without a meal.</div>';
  }else if(!top){
-  body='<div class="note">No restaurant works for everyone at AED '+S.budget+'. Raise the budget or change who’s ordering.</div>';
+  body='<div class="note">No single restaurant works for everyone at AED '+S.budget+'. Raise the budget or change who’s ordering.</div>';
  }else{
   var r=R[top.rid];
-  body='<div class="card hero"><div style="position:relative"><span class="src">Best pick for today</span>'+art(r.art,true)+'</div><div class="body"><h3>'+r.name+'</h3><div class="sub">'+r.cuisine+' · '+r.branch+' branch · '+r.eta[0]+' to '+r.eta[1]+' min</div>'+checks(top.rid,true)+'<p class="why">'+why(top)+'</p><button class="btn" data-act="cart" data-rid="'+top.rid+'">Open group cart</button></div></div>'+
-   (alts.length?'<div class="k">Also works for everyone</div>'+alts.map(function(a){var q=R[a.rid];return '<div class="alt">'+art(q.art)+'<div class="grow"><b>'+q.name+'</b><div class="sub">'+q.eta[0]+' to '+q.eta[1]+' min · '+(saversCount(a.rid)?NUM[saversCount(a.rid)].toLowerCase()+' saved it':'fits your tastes')+'</div></div><button class="chip" data-act="cart" data-rid="'+a.rid+'">Choose</button></div>'}).join(''):'');
+  body='<div class="card hero"><div style="position:relative"><span class="src">Best pick for today</span>'+art(r.art,true)+'</div><div class="body"><h3>'+r.name+'</h3><div class="sub">'+r.cuisine+' · '+r.branch+' branch · '+r.eta[0]+' to '+r.eta[1]+' min</div>'+checks(top.rid,true)+'<p class="why">'+why(top)+'</p>'+
+   (host?'<button class="btn" data-act="startlunch" data-rid="'+top.rid+'">Start this lunch</button>':'<button class="btn" data-act="suggest" data-rid="'+top.rid+'">Suggest to Maya</button>')+'</div></div>'+
+   (alts.length?'<div class="k">Also works for everyone</div>'+alts.map(function(a){var q=R[a.rid];return '<div class="alt">'+art(q.art)+'<div class="grow"><b>'+q.name+'</b><div class="sub">'+q.eta[0]+' to '+q.eta[1]+' min · '+(saversCount(a.rid)?NUM[saversCount(a.rid)].toLowerCase()+' saved it':'fits your tastes')+'</div></div><button class="chip" data-act="'+(host?'startlunch':'suggest')+'" data-rid="'+a.rid+'">Choose</button></div>'}).join(''):'');
   if(rk.out.length)body+='<div class="k">Left out, and why</div><div class="left">'+rk.out.map(function(o){var q=R[o.rid],sh=[];IDS.forEach(function(m){if(S.saves[m].some(function(s){return s.rid===o.rid&&s.shared}))sh.push(M[m].name)});return '<div><b>'+q.name+'</b>'+(sh.length?' (shared by '+sh.join(', ')+')':'')+': '+o.fail.why+'.</div>'}).join('')+'</div>';
   body+='<div class="note lock">🔒 Individual saves stay private. Names only appear for reels a member shared.</div>';
  }
  return '<section class="scr">'+head+body+'</section>';
 }
+
+function branches(rid){var r=R[rid];return [{n:r.branch,ok:!S.branchDown,eta:r.eta},{n:'DIFC',ok:true,eta:[r.eta[0]+10,r.eta[1]+10]}]}
+function vSetup(){
+ var st=S.setup,r=R[st.rid],bs=branches(st.rid);
+ if(S.viewer!=='maya')return '<section class="scr"><div class="top"><button class="back" data-go="group" aria-label="Back">‹</button><h2 style="font-size:22px">Start the order</h2><span style="width:40px"></span></div><div class="note">Only the host starts the order. Maya will confirm the branch, address and cutoff.</div></section>'+tabs('group');
+ if(!S.setupBranch||!bs.filter(function(b){return b.n===S.setupBranch&&b.ok}).length){var f=bs.filter(function(b){return b.ok})[0];S.setupBranch=f?f.n:null}
+ var bad=!bs[0].ok;
+ return '<section class="scr"><div class="top"><button class="back" data-go="group" aria-label="Back">‹</button><h2 style="font-size:22px">Start the order</h2><span style="width:40px"></span></div>'+
+  '<div class="card"><div style="position:relative">'+art(r.art)+'</div><div class="body"><h3>'+r.name+'</h3><div class="sub">'+r.cuisine+(st.dish?' · featured: '+esc(st.dish):'')+'</div></div></div>'+
+  (bad?'<div class="alert"><b>'+bs[0].n+' can’t deliver to Emaar Square right now.</b> Pick another branch, or choose a different restaurant.<div class="row"><button class="chip" data-go="find">Pick another restaurant</button></div></div>':'')+
+  '<div class="k">Branch</div>'+bs.map(function(b){return '<button class="item" data-act="branch" data-v="'+b.n+'" aria-pressed="'+(S.setupBranch===b.n)+'" '+(b.ok?'':'disabled')+'><div><b>'+b.n+' branch</b><span>'+(b.ok?'Delivers to Emaar Square · '+b.eta[0]+' to '+b.eta[1]+' min':'Can’t deliver to this address right now')+'</span></div></button>'}).join('')+
+  '<div class="k">Delivery address</div><div class="mrow"><span style="font-size:20px">📍</span><div class="grow"><b>Emaar Square, Downtown Dubai</b><div class="sub">Office Lunch’s saved address</div></div><button class="chip" data-act="chaddr">Change</button></div>'+
+  '<div class="k">Order closes at</div><div class="chips">'+[735,750,765].map(function(t){return '<button class="chip" data-act="cut" data-v="'+t+'" style="'+(S.order.cutoff===t?'background:var(--plum);color:var(--cream)':'')+'">'+hm(t)+'</button>'}).join('')+'</div>'+
+  '<div class="cta"><button class="btn" data-act="startorder" '+(S.setupBranch?'':'disabled')+'>Start group order</button><div class="sub" style="text-align:center">Everyone sees Join lunch order on the group card.</div></div></section>';
+}
+
+function itemName(it){return it.n}
+function soldItem(it){if(!S.soldOut)return false;var f=S.order.reelDish,r=R[S.pick];if(f)return it.n===f;return it.id===r.menu.filter(function(i){return i.main})[0].id}
+function dropMembers(ids){
+ var before={};incl().forEach(function(m){before[m]=share(m)});
+ ids.forEach(function(i){S.inc[i]=false});
+ incl().forEach(function(m){var c=S.cart[m];if(c.ready){c.prev=before[m];c.ready=false;c.reconfirm=true}});
+}
+function stLabel(m){var c=S.cart[m];if(!S.inc[m])return ['Not in order',''];if(c.pay==='failed'&&!c.ready)return ['Payment failed','bad'];if(c.reconfirm&&!c.ready)return ['Reconfirm','warn'];return c.ready?['Ready','ready']:['Choosing','']}
 function vCart(){
- var r=R[S.pick],v=S.viewer,isHost=v==='maya',inc=incl();
- var all=inc.every(function(m){return S.cart[m].ready});
- var rows=inc.map(function(m){var c=S.cart[m];var names=c.items.map(function(id){return r.menu.filter(function(i){return i.id===id})[0].n}).join(' + ');
-  return '<div class="mrow '+(m===v?'me':'')+'">'+av(m,38)+'<div class="grow"><b>'+M[m].name+(m===v?' (you)':'')+'</b><div class="sub">'+(names||'Hasn’t picked yet')+'</div></div><span class="st '+(c.ready?'ready':'')+'">'+(c.ready?'Ready':'Choosing')+'</span></div>'}).join('');
- var mine=S.cart[v];
- var menu=!S.inc[v]?'<div class="note">You’re not in today’s order.</div>':r.menu.map(function(it){var bad=M[v].veg&&!it.veg;
-  return '<button class="item" data-act="item" data-id="'+it.id+'" aria-pressed="'+(mine.items.indexOf(it.id)>-1)+'" '+(bad||mine.ready?'disabled':'')+'><div><b>'+it.n+'</b><span>'+(bad?'Not vegetarian':it.main?(it.p>S.budget?'Over budget':'Main'):'Side')+(featured(it)?' · featured in the shared reel':'')+'</span></div><span class="p">AED '+it.p+'</span></button>'}).join('');
- var f=feeEach(),it=itemsTotal(v);
- var mineBlock=!S.inc[v]?'':'<div class="k">Your meal</div>'+menu+'<div class="sum"><div><span>Your items</span><span>'+m2(it)+'</span></div><div><span>Delivery share (÷'+inc.length+')</span><span>'+m2(FEE_D/inc.length)+'</span></div><div><span>Service share (÷'+inc.length+')</span><span>'+m2(FEE_S/inc.length)+'</span></div><div class="tot"><span>Your share</span><span>'+m2(it+f)+'</span></div></div>';
- var cta;
- if(mine.ready&&!isHost) cta='<button class="btn alt" data-act="edit">Edit my basket</button>';
- else if(!mine.ready&&S.inc[v]) cta='<button class="btn" data-act="confirm" '+(hasMain(v)?'':'disabled')+'>Confirm my share · '+m2(it+f)+'</button><div class="sub" style="text-align:center">Simulated payment. No real money moves.</div>';
- else cta='';
- if(isHost&&mine.ready){
-  var waiting=inc.filter(function(m){return !S.cart[m].ready}).map(function(m){return M[m].name});
-  cta='<button class="btn" data-act="place" '+(all?'':'disabled')+'>'+(all?'Place one order · '+m2(orderTotal()):'Waiting for '+waiting.join(' and '))+'</button><button class="link" data-act="edit">Edit my basket</button><div class="sub" style="text-align:center">You never cover anyone else’s share.</div>';
+ var r=R[S.pick],v=S.viewer,isHost=v==='maya',inc=incl(),O=S.order,me=S.cart[v],inOrder=S.inc[v];
+ var allReady=inc.every(function(m){return S.cart[m].ready});
+ var notReady=inc.filter(function(m){return !S.cart[m].ready}),failed=inc.filter(function(m){return S.cart[m].pay==='failed'&&!S.cart[m].ready});
+ var rows=IDS.map(function(m){var c=S.cart[m];var names=c.items.map(function(id){return r.menu.filter(function(i){return i.id===id})[0].n}).join(' + ');var s=stLabel(m);
+  return '<div class="mrow '+(m===v?'me':'')+'" style="'+(S.inc[m]?'':'opacity:.55')+'">'+av(m,38)+'<div class="grow"><b>'+M[m].name+(m===v?' (you)':'')+'</b><div class="sub">'+(names||'Hasn’t picked yet')+'</div></div><span class="st '+s[1]+'">'+s[0]+'</span></div>'}).join('');
+ var banners='';
+ if(S.soldOut){var fn=O.reelDish||r.menu.filter(function(i){return i.main})[0].n;banners+='<div class="alert"><b>'+fn+' is sold out today.</b> You can still browse the rest of the menu.</div>'}
+ if(inOrder&&me.reconfirm&&!me.ready)banners+='<div class="alert"><b>The group changed.</b> Your share is now '+m2(share(v))+' (was '+m2(me.prev)+'). Reconfirm to stay in the order.</div>';
+ if(inOrder&&me.pay==='failed'&&!me.ready)banners+='<div class="alert"><b>Payment didn’t go through.</b> Your basket is saved. Retry to confirm your share.</div>';
+ if(!inOrder)banners+='<div class="alert"><b>You’re not in this order.</b> The host continued without you. Your basket is kept below.</div>';
+ if(inOrder&&O.closed&&!me.ready&&!isHost&&!me.reconfirm)banners+='<div class="alert"><b>Cutoff passed at '+hm(O.cutoff)+'.</b> Maya is deciding whether to extend or continue.</div>';
+ var menu=r.menu.map(function(it){var bad=M[v].veg&&!it.veg,sold=soldItem(it),sel=me.items.indexOf(it.id)>-1;
+  var note=sold?'Sold out today':bad?'Not vegetarian':it.main?(it.p>S.budget?'Over budget':'Main'):'Side';
+  if(featured(it)&&!sold)note+=' · featured in the shared reel';
+  return '<button class="item" data-act="item" data-id="'+it.id+'" aria-pressed="'+sel+'" '+((bad||sold||me.ready||!inOrder)?'disabled':'')+'><div><b>'+it.n+'</b><span>'+note+'</span></div><span class="p">AED '+it.p+'</span></button>'}).join('');
+ var f=feeEach(),it2=itemsTotal(v),n=inc.length;
+ var mineBlock='<div class="k">Your meal</div>'+menu+(inOrder?'<div class="sum"><div><span>Your items</span><span>'+m2(it2)+'</span></div><div><span>Delivery share (÷'+n+')</span><span>'+m2(FEE_D/n)+'</span></div><div><span>Service share (÷'+n+')</span><span>'+m2(FEE_S/n)+'</span></div><div class="tot"><span>Your share</span><span>'+m2(it2+f)+'</span></div></div>':'');
+ var cta='';
+ if(!inOrder)cta='<button class="btn alt" data-act="askback">Ask Maya to add me back</button>';
+ else if(!me.ready){
+  var lab=(me.pay==='failed'?'Retry · ':me.reconfirm?'Reconfirm my share · ':'Confirm my share · ')+m2(it2+f);
+  var late=O.closed&&!isHost&&!me.reconfirm;var blocked=!hasMain(v)||late;
+  cta='<button class="btn" data-act="confirm" '+(blocked?'disabled':'')+'>'+(late?'Cutoff passed':lab)+'</button><div class="sub" style="text-align:center">Simulated payment. No real money moves.</div>';
+ }else if(!isHost)cta='<button class="btn alt" data-act="edit">Edit my basket</button>';
+ var hostPanel='';
+ if(isHost){
+  if(O.closed&&notReady.length)hostPanel+='<div class="alert"><b>Cutoff passed ('+hm(O.cutoff)+').</b> '+notReady.map(function(m){return M[m].name}).join(' and ')+(notReady.length>1?' haven’t':' hasn’t')+' confirmed.<div class="row"><button class="chip" data-act="extend">Extend 10 min</button><button class="chip" data-act="continue">Continue with ready members</button></div></div>';
+  if(failed.length)hostPanel+='<div class="alert"><b>'+failed.map(function(m){return M[m].name}).join(' and ')+'’s payment failed.</b> They can retry, or you can proceed without them. Totals will change and everyone reconfirms.<div class="row">'+failed.map(function(m){return '<button class="chip" data-act="drop" data-id="'+m+'">Proceed without '+M[m].name+'</button>'}).join('')+'</div></div>';
+  if(me.ready||!inOrder){
+   var waiting=notReady.map(function(m){return M[m].name});
+   cta=(inOrder?'<button class="btn" data-act="place" '+(allReady?'':'disabled')+'>'+(allReady?'Place one order · '+m2(orderTotal()):'Waiting for '+waiting.join(' and '))+'</button><button class="link" data-act="edit">Edit my basket</button><div class="sub" style="text-align:center">You never cover anyone else’s share.</div>':cta);
+  }
  }
- return '<section class="scr"><div class="top"><button class="back" data-go="find" aria-label="Back">‹</button><h2 style="font-size:22px">Group cart</h2><span style="width:40px"></span></div>'+
-  '<div class="card"><div class="body"><div class="row"><div class="grow"><h3 style="font-size:20px">'+r.name+'</h3><div class="sub">'+r.branch+' branch · Emaar Square · order closes 12:30</div></div></div>'+checks(S.pick,true)+'</div></div>'+
-  '<div class="k">Everyone’s progress</div>'+rows+mineBlock+'<div class="cta">'+cta+'</div></section>';
+ return '<section class="scr"><div class="top"><button class="back" data-go="group" aria-label="Back">‹</button><h2 style="font-size:22px">Group cart</h2><span style="width:40px"></span></div>'+
+  '<div class="card"><div class="body"><h3 style="font-size:20px">'+r.name+' · '+O.branch+'</h3><div class="sub">Emaar Square · '+(O.closed?'closed at ':'order closes ')+hm(O.cutoff)+'</div>'+checks(S.pick,true)+'</div></div>'+
+  banners+hostPanel+'<div class="k">Everyone’s progress</div>'+rows+mineBlock+'<div class="cta">'+cta+'</div></section>';
 }
 var STAT=['Order placed','Restaurant is preparing','Out for delivery','Delivered'];
 function vDone(){
  var r=R[S.pick],inc=incl();
  var lines=inc.map(function(m){var c=S.cart[m];return '<div class="mrow '+(m===S.viewer?'me':'')+'">'+av(m,36)+'<div class="grow"><b>'+M[m].name+(m===S.viewer?' (you)':'')+'</b><div class="sub">'+c.items.map(function(id){return r.menu.filter(function(i){return i.id===id})[0].n}).join(' + ')+'</div></div><b style="font-variant-numeric:tabular-nums">'+m2(share(m))+'</b></div>'}).join('');
  var tl=STAT.map(function(s,i){return '<li class="'+(i<S.status?'done':i===S.status?'now':'future')+'"><i></i>'+(i===3&&S.status===3?'Delivered · confirmed':s)+'</li>'}).join('');
- return '<section class="scr"><div class="top">'+word(26)+av(S.viewer,38)+'</div><div><div class="k">Same confirmation for everyone</div><h1>'+(S.status===3?'Lunch has arrived':'Lunch is on its way')+'</h1><div class="sub">'+r.name+' · Emaar Square · '+r.eta[0]+' to '+r.eta[1]+' min · Order #SV-2041</div></div>'+
+ return '<section class="scr"><div class="top">'+word(26)+av(S.viewer,38)+'</div><div><div class="k">Same confirmation for everyone</div><h1>'+(S.status===3?'Lunch has arrived':'Lunch is on its way')+'</h1><div class="sub">'+r.name+' · '+S.order.branch+' · Emaar Square · '+r.eta[0]+' to '+r.eta[1]+' min · Order #SV-2041</div></div>'+
   '<ul class="tl">'+tl+'</ul><div class="k">Who ordered what</div>'+lines+'<div class="sum"><div class="tot"><span>Order total</span><span>'+m2(orderTotal())+'</span></div></div>'+
   '<div class="cta">'+(S.status<3?'<button class="btn plum" data-act="adv">Demo: advance delivery status</button>':'')+'<button class="link" data-act="newlunch">Start another lunch</button></div></section>'}
 
 function render(){
- var a=document.getElementById('app'),h='';
- var s=S.screen;
- if(s==='splash')h=vSplash();else if(s==='first')h=vFirst();else if(s==='join')h=vJoin();else if(s==='saves')h=vSaves();else if(s==='group')h=vGroup();else if(s==='find')h=vFind();else if(s==='cart')h=vCart();else h=vDone();
+ var a=document.getElementById('app'),s=S.screen,h;
+ if(s==='splash')h=vSplash();else if(s==='first')h=vFirst();else if(s==='join')h=vJoin();else if(s==='create'||s==='created')h=vCreate();else if(s==='saves')h=vSaves();else if(s==='group')h=vGroup();else if(s==='find')h=vFind();else if(s==='setup')h=vSetup();else if(s==='cart')h=vCart();else h=vDone();
+ if(S.group.name!=='Office Lunch'||S.group.addr!=='Emaar Square, Downtown'){
+  h=h.split('Emaar Square, Downtown Dubai').join(esc(S.group.addr)).split('Emaar Square, Downtown').join(esc(S.group.addr)).split('Emaar Square').join(esc(S.group.addr)).split('Office Lunch').join(esc(S.group.name));
+ }
  a.innerHTML=h;
  var seg=document.getElementById('seg');seg.innerHTML=IDS.map(function(m){return '<button data-role="'+m+'" aria-pressed="'+(S.viewer===m)+'">'+M[m].name+(m==='maya'?' · Host':'')+'</button>'}).join('');
- var w=S.viewer==='maya'?'Host. Maya started the group.':(S.joined[S.viewer]?M[S.viewer].name+', invited colleague. Joined Office Lunch.':M[S.viewer].name+', invited colleague. Has an invite link.');
+ var w=S.viewer==='maya'?'Host. Maya started the group.':(S.joined[S.viewer]?M[S.viewer].name+', invited colleague. Joined '+esc(S.group.name)+'.':M[S.viewer].name+', invited colleague. Has an invite link.');
  document.getElementById('who').textContent=w+' '+M[S.viewer].diet+'.';
+ [['simSold',S.soldOut],['simBranch',S.branchDown],['simPay',S.failNext]].forEach(function(x){var e=document.getElementById(x[0]);if(e)e.setAttribute('aria-pressed',String(x[1]))});
 }
-function landing(){ // where each person starts after splash
- var v=S.viewer;
- if(!S.onboard[v]) return 'first';
- if(!S.joined[v]) return 'join';
- return 'group';
-}
+function landing(){var v=S.viewer;if(!S.onboard[v])return 'first';if(!S.joined[v])return 'join';return 'group'}
+
 /* ---------- events ---------- */
+document.addEventListener('input',function(e){if(e.target.id==='q'){S.draft.q=e.target.value;var el=document.getElementById('results');if(el)el.innerHTML=resultsHtml()}});
+document.addEventListener('submit',function(e){if(e.target.id==='codeForm'){e.preventDefault();S.codeVal=document.getElementById('code').value;S.codeOk=/^OFFICE-?4821$/i.test(S.codeVal.replace(/\s/g,''))||(S.group.code&&S.codeVal.toUpperCase()===S.group.code);render()}});
 document.addEventListener('click',function(e){
  var t=e.target.closest('[data-go],[data-act],[data-role],[data-splash]');if(!t)return;
  if(t.dataset.splash!==undefined){go(landing());return}
  if(t.dataset.go){go(t.dataset.go);return}
- if(t.dataset.role){S.viewer=t.dataset.role;var sc=S.screen;if(sc==='splash'||sc==='first'||sc==='join'||sc==='saves'||sc==='group')go(sc==='saves'&&S.onboard[S.viewer]&&S.joined[S.viewer]?'saves':landing());else render();return}
- var a=t.dataset.act,v=S.viewer;
- if(a==='sample'){S.draft.loaded=true;render()}
- else if(a==='paste'){var u=(document.getElementById('url').value||'').trim();S.draft.url=u;if(/instagram\.com\/reel|tiktok\.com|youtube\.com\/shorts|youtu\.be/i.test(u)){S.draft.loaded=true;render()}else toast('Paste an Instagram Reel, TikTok or YouTube Shorts link.')}
- else if(a==='wrong'){toast('Restaurant search opens here. Confirm the right place before saving.')}
- else if(a==='dsig'){S.draft.signal=t.dataset.v;render()}
- else if(a==='savefirst'){S.saves[v].push({id:'n'+Date.now(),rid:'smash',dish:'Classic smash burger',src:'Instagram Reel',signal:S.draft.signal,shared:false,when:'just now'});if(S.taste[v].indexOf('Burgers')<0)S.taste[v].push('Burgers');S.onboard[v]=true;S.draft={url:'',loaded:false,signal:'want'};go('saves');toast('Saved privately. Share it with Office Lunch whenever you like.')}
- else if(a==='addreel'){S.draft={url:'',loaded:false,signal:'want'};go('first')}
+ if(t.dataset.role){S.viewer=t.dataset.role;var sc=S.screen;if(sc==='setup'&&S.viewer!=='maya'){go('group');return}if(sc==='splash'||sc==='first'||sc==='join'||sc==='saves'||sc==='group')go(sc==='saves'&&S.onboard[S.viewer]&&S.joined[S.viewer]?'saves':landing());else render();return}
+ var a=t.dataset.act,v=S.viewer,d=S.draft,O=S.order;
+ if(a==='sample'){d.mode='matched';d.loaded=true;d.rid='smash';d.dish='Classic smash burger';d.src='Instagram Reel';render()}
+ else if(a==='sampleX'){d.mode='unmatched';d.loaded=false;d.src='TikTok';render()}
+ else if(a==='paste'){var u=(document.getElementById('url').value||'').trim();d.url=u;if(/unmatched/i.test(u)){d.mode='unmatched';d.src='TikTok';render()}else if(/instagram\.com\/reel|tiktok\.com|youtube\.com\/shorts|youtu\.be/i.test(u)){d.mode='matched';d.loaded=true;d.rid='smash';d.dish='Classic smash burger';d.src=/tiktok/i.test(u)?'TikTok':/youtu/i.test(u)?'YouTube Shorts':'Instagram Reel';render()}else toast('Paste an Instagram Reel, TikTok or YouTube Shorts link.')}
+ else if(a==='findrest'){d.mode='search';d.q='';render()}
+ else if(a==='pickrest'){d.rid=t.dataset.rid;d.mode='dish';render()}
+ else if(a==='pickdish'){d.dish=t.dataset.v;d.mode='matched';d.loaded=true;render()}
+ else if(a==='dsig'){d.signal=t.dataset.v;render()}
+ else if(a==='savefirst'){S.saves[v].push({id:'n'+Date.now(),rid:d.rid,dish:d.dish,src:d.src,signal:d.signal,shared:false,when:'just now'});var cu=R[d.rid].cuisine;if(S.taste[v].indexOf(cu)<0)S.taste[v].push(cu);S.onboard[v]=true;S.draft=newDraft();go('saves');toast('Saved privately. Share it with Office Lunch whenever you like.')}
+ else if(a==='addreel'){S.draft=newDraft();go('first')}
  else if(a==='sig'){S.saves[v].forEach(function(s){if(s.id===t.dataset.id)s.signal=t.dataset.v});render()}
  else if(a==='share'){S.saves[v].forEach(function(s){if(s.id===t.dataset.id){s.shared=!s.shared;toast(s.shared?'Shared with Office Lunch. Members can now see it’s yours.':'Unshared. It’s private again.')}});render()}
  else if(a==='rmtaste'){S.taste[v]=S.taste[v].filter(function(x){return x!==t.dataset.v});toast('Got it. SAVD won’t use '+t.dataset.v+' for you.');render()}
- else if(a==='join'){S.joined[v]=true;go('group');toast('You joined Office Lunch.')}
- else if(a==='create'){toast('Creating a new group is the next build step.')}
+ else if(a==='join'){S.joined[v]=true;go('group');toast('You joined '+S.group.name+'.')}
+ else if(a==='mkgroup'){var gn=(document.getElementById('gname').value||'').trim()||'Team Lunch',ga=(document.getElementById('gaddr').value||'').trim()||'Business Bay Tower, Dubai';S.group={name:gn,addr:ga,code:'LUNCH-'+(1000+Math.floor(Math.random()*9000))};S.created=true;S.screen='created';render()}
+ else if(a==='opengroup'){S.created=false;S.joined.maya=true;go('group')}
  else if(a==='inc'){var id=t.dataset.id;if(S.inc[id]&&incl().length===1){toast('At least one person has to be in.');return}S.inc[id]=!S.inc[id];render()}
  else if(a==='bud'){S.budget=Math.max(20,Math.min(60,S.budget+Number(t.dataset.v)));render()}
  else if(a==='cmp'){S.compare=t.dataset.v==='1';render()}
- else if(a==='orderreel'||a==='cart'){if(S.pick!==t.dataset.rid){S.cart={maya:{items:[],ready:false},omar:{items:[],ready:false},layla:{items:[],ready:false}}}S.pick=t.dataset.rid;go('cart')}
- else if(a==='item'){var c=S.cart[v],r=R[S.pick],it=r.menu.filter(function(i){return i.id===t.dataset.id})[0];
-   var i=c.items.indexOf(it.id);if(i>-1)c.items.splice(i,1);else{if(it.main)c.items=c.items.filter(function(x){return !r.menu.filter(function(q){return q.id===x&&q.main}).length});c.items.push(it.id)}render()}
- else if(a==='confirm'){S.cart[v].ready=true;toast('Simulated payment approved for '+m2(share(v))+'.');render()}
+ else if(a==='suggest'){S.suggested=t.dataset.rid;toast('Suggested to Maya. She starts the order.')}
+ else if(a==='startlunch'){S.setup={rid:t.dataset.rid,dish:null};S.setupBranch=null;go('setup')}
+ else if(a==='orderreel'){S.setup={rid:t.dataset.rid,dish:t.dataset.dish};S.setupBranch=null;go('setup')}
+ else if(a==='branch'){S.setupBranch=t.dataset.v;render()}
+ else if(a==='cut'){S.order.cutoff=Number(t.dataset.v);render()}
+ else if(a==='chaddr'){toast('Address picker opens here. Office Lunch’s address is used by default.')}
+ else if(a==='startorder'){S.order={stage:'open',rid:S.setup.rid,branch:S.setupBranch,cutoff:S.order.cutoff,closed:false,reelDish:S.setup.dish};S.pick=S.setup.rid;S.cart=newCart();S.inc={maya:true,omar:true,layla:true};S.placed=false;go('group');toast('Lunch order started. Everyone can join.')}
+ else if(a==='joinorder'){S.pick=S.order.rid;go('cart')}
+ else if(a==='item'){var c=S.cart[v],r=R[S.pick],it=r.menu.filter(function(i){return i.id===t.dataset.id})[0];var i=c.items.indexOf(it.id);if(i>-1)c.items.splice(i,1);else{if(it.main)c.items=c.items.filter(function(x){return !r.menu.filter(function(q){return q.id===x&&q.main}).length});c.items.push(it.id)}render()}
+ else if(a==='confirm'){if(S.failNext){S.failNext=false;S.cart[v].pay='failed';S.cart[v].ready=false;toast('Simulated payment failed. Your basket is saved.');render();return}S.cart[v].ready=true;S.cart[v].pay='ok';S.cart[v].reconfirm=false;S.cart[v].prev=null;toast('Simulated payment approved for '+m2(share(v))+'.');render()}
  else if(a==='edit'){S.cart[v].ready=false;render()}
- else if(a==='place'){S.placed=true;S.status=0;go('done')}
+ else if(a==='extend'){O.cutoff+=10;O.closed=false;toast('Cutoff extended to '+hm(O.cutoff)+'.');render()}
+ else if(a==='continue'){var nr=incl().filter(function(m){return !S.cart[m].ready});dropMembers(nr);toast('Continuing without '+nr.map(function(m){return M[m].name}).join(' and ')+'. Ready members reconfirm the new totals.');render()}
+ else if(a==='drop'){dropMembers([t.dataset.id]);toast('Continuing without '+M[t.dataset.id].name+'. Others reconfirm the new totals.');render()}
+ else if(a==='askback'){toast('Request sent to Maya. She can add you back before the order is placed.')}
+ else if(a==='place'){S.order.stage='placed';S.placed=true;S.status=0;go('done')}
  else if(a==='adv'){S.status=Math.min(3,S.status+1);render()}
- else if(a==='newlunch'){S.placed=false;S.pick=null;S.cart={maya:{items:[],ready:false},omar:{items:[],ready:false},layla:{items:[],ready:false}};go('group')}
+ else if(a==='newlunch'){S.placed=false;S.pick=null;S.order={stage:'none',rid:null,branch:null,cutoff:750,closed:false,reelDish:null};S.cart=newCart();S.inc={maya:true,omar:true,layla:true};go('group')}
 });
 document.getElementById('reset').onclick=function(){S=fresh();render();setTimeout(function(){if(S.screen==='splash')go(landing())},1500)};
-document.getElementById('replay').onclick=function(){S.viewer='maya';S.onboard.maya=false;S.saves.maya=[];S.draft={url:'',loaded:false,signal:'want'};go('splash');setTimeout(function(){if(S.screen==='splash')go('first')},1500)};
+document.getElementById('replay').onclick=function(){S.viewer='maya';S.onboard.maya=false;S.saves.maya=[];S.draft=newDraft();go('splash');setTimeout(function(){if(S.screen==='splash')go('first')},1500)};
+document.getElementById('simSold').onclick=function(){S.soldOut=!S.soldOut;render();toast(S.soldOut?'Featured dish is now sold out.':'Dish is available again.')};
+document.getElementById('simBranch').onclick=function(){S.branchDown=!S.branchDown;render();toast(S.branchDown?'The first branch can’t deliver to this address.':'Branch delivers again.')};
+document.getElementById('simPay').onclick=function(){S.failNext=!S.failNext;render();toast(S.failNext?'The next payment confirmation will fail.':'Payments will succeed.')};
+document.getElementById('simCut').onclick=function(){if(S.order.stage!=='open'){toast('Start a group order first.');return}S.order.closed=true;render();toast('The cutoff has passed.')};
 document.getElementById('railLogo').innerHTML=word(40);
 
 S=fresh();render();
